@@ -8,7 +8,9 @@
 /// fill scripts, builds the same checksums and prints rows per second, so the
 /// drivers are compared on identical data. Deliberately a single program
 /// without a data module: it only measures.
-/// Usage: DbReadBench.FireDAC fb|pg|mssql host port database user password [vendorlib] [notz]
+/// Usage: DbReadBench.FireDAC fb|pg|mssql host port database user password [vendorlib] [notz] [tuned]
+/// "tuned" changes only FireDAC options, never the query: larger rowsets, no
+/// metadata lookups, silent mode and a read-only dataset.
 /// </remarks>
 ///
 /// <copyright>
@@ -46,12 +48,14 @@ uses
 const
   cRuns = 3;
   cRowsetSize = 2000;
+  cTunedRowsetSize = 10000;
   scSelectColumns = 'SELECT ID, PARENT_ID, BRANCH_NO, KIND, STATUS, PRICE, OLD_PRICE, FACTOR, ' +
     'LABEL_TEXT, CREATED_AT, BIG_AMOUNT';
   // The zoned column needs ICU in the Firebird client; "notz" leaves it out.
   scZonedColumn = ', CREATED_TZ';
   scFrom = ' FROM BENCH_ROWS';
   scNoZonedSwitch = 'notz';
+  scTunedSwitch = 'tuned';
   scUmlautMarker = 'Österreich';
   scEngineFirebird = 'fb';
   scEnginePostgres = 'pg';
@@ -174,7 +178,7 @@ end;
 procedure RunBenchmark;
 var
   LEngine, LVendorLib: string;
-  LWithZoned: Boolean;
+  LWithZoned, LTuned: Boolean;
   LFB: TFDPhysFBDriverLink;
   LPG: TFDPhysPgDriverLink;
   LMSSQL: TFDPhysMSSQLDriverLink;
@@ -183,11 +187,17 @@ var
   i: Integer;
 begin
   LEngine := LowerCase(ParamStr(1));
-  LWithZoned := not SameText(ParamStr(ParamCount), scNoZonedSwitch);
-  if (ParamCount >= 7) and not SameText(ParamStr(7), scNoZonedSwitch) then
-    LVendorLib := ParamStr(7)
-  else
-    LVendorLib := '';
+  LWithZoned := True;
+  LTuned := False;
+  LVendorLib := '';
+  // Optional arguments in any order: the two switches, anything else is the client library.
+  for i := 7 to ParamCount do
+    if SameText(ParamStr(i), scNoZonedSwitch) then
+      LWithZoned := False
+    else if SameText(ParamStr(i), scTunedSwitch) then
+      LTuned := True
+    else
+      LVendorLib := ParamStr(i);
   LFB := TFDPhysFBDriverLink.Create(nil);
   LPG := TFDPhysPgDriverLink.Create(nil);
   LMSSQL := TFDPhysMSSQLDriverLink.Create(nil);
@@ -202,11 +212,18 @@ begin
     LQuery.FetchOptions.Unidirectional := True;
     LQuery.FetchOptions.Mode := fmOnDemand;
     LQuery.FetchOptions.RowsetSize := cRowsetSize;
+    if LTuned then
+    begin
+      LQuery.FetchOptions.RowsetSize := cTunedRowsetSize;
+      LQuery.FetchOptions.Items := LQuery.FetchOptions.Items - [fiMeta];
+      LQuery.ResourceOptions.SilentMode := True;
+      LQuery.UpdateOptions.ReadOnly := True;
+    end;
     if LWithZoned then
       LQuery.SQL.Text := scSelectColumns + scZonedColumn + scFrom
     else
       LQuery.SQL.Text := scSelectColumns + scFrom;
-    Writeln(LEngine, ': zoned column ', LWithZoned);
+    Writeln(LEngine, ': zoned column ', LWithZoned, ', tuned ', LTuned);
     for i := 1 to cRuns do
       RunOnce(LConnection, LQuery, i);
   finally
@@ -221,7 +238,7 @@ end;
 begin
   if ParamCount < 6 then
   begin
-    Writeln('Usage: DbReadBench.FireDAC fb|pg|mssql host port database user password [vendorlib] [notz]');
+    Writeln('Usage: DbReadBench.FireDAC fb|pg|mssql host port database user password [vendorlib] [notz] [tuned]');
     ExitCode := 2;
     Exit;
   end;
