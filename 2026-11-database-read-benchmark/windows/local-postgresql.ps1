@@ -2,11 +2,13 @@
 # setup:   downloads the official EDB binaries zip once (no installation, no service), creates a cluster
 #          in a work folder and fills the bench database.
 # measure: starts the cluster, runs FireDAC (default and tuned) and .NET against it, and stops it again.
+# profile: starts the cluster and samples a FireDAC run with tools\sample-windows.ps1 (needs the .map of the build).
 # Example: .\local-postgresql.ps1 setup
 #          .\local-postgresql.ps1 measure -FireDacExe <path>\DbReadBench.FireDAC.exe
 param(
-  [Parameter(Mandatory)][ValidateSet('setup', 'measure')][string]$Phase,
+  [Parameter(Mandatory)][ValidateSet('setup', 'measure', 'profile')][string]$Phase,
   [string]$FireDacExe,
+  [string]$MapFile,
   [string]$WorkDir = (Join-Path $env:LOCALAPPDATA 'dbbench-local'),
   [int]$Port = 55434,
   [int]$Rounds = 1,
@@ -82,6 +84,11 @@ if ($Phase -eq 'setup') {
     Invoke-Psql @('-d', 'bench', '-f', (Join-Path $BenchDir 'postgresql\fill.sql'))
     'filled in {0:F0} s' -f $watch.Elapsed.TotalSeconds
   }
+  finally { Stop-Postgres }
+}
+elseif ($Phase -eq 'profile') {
+  Start-Postgres
+  try { Invoke-Profile $FireDacExe $MapFile @('pg', '127.0.0.1', "$Port", 'bench', 'bench', $password, (Join-Path $bin 'libpq.dll')) -NoZoned:$NoZoned }
   finally { Stop-Postgres }
 }
 else {

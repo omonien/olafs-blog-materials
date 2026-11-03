@@ -77,12 +77,8 @@ if ($Phase -eq 'setup') {
   finally { Stop-Process -Id $server.Id -Force }
 }
 elseif ($Phase -eq 'profile') {
-  if (-not $FireDacExe -or -not $MapFile) { throw 'profile needs -FireDacExe and -MapFile' }
   $server = Start-Firebird
-  try {
-    $arguments = @('fb', '127.0.0.1', "$Port", $database, 'SYSDBA', $password) + $(if ($NoZoned) { @('notz') } else { @() })
-    & (Join-Path $BenchDir 'tools\sample-windows.ps1') -FilePath $FireDacExe -MapFile $MapFile -Arguments $arguments
-  }
+  try { Invoke-Profile $FireDacExe $MapFile @('fb', '127.0.0.1', "$Port", $database, 'SYSDBA', $password) -NoZoned:$NoZoned }
   finally { Stop-Process -Id $server.Id -Force }
 }
 else {

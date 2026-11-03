@@ -66,6 +66,13 @@ function Invoke-Measured([string]$Label, [string]$FilePath, [string[]]$Arguments
   finally { $process.Dispose() }
 }
 
+# Samples one FireDAC run with tools\sample-windows.ps1; the map comes from a build with DCC_MapFile=3.
+function Invoke-Profile([string]$FireDacExe, [string]$MapFile, [string[]]$Arguments, [switch]$NoZoned) {
+  if (-not $FireDacExe -or -not $MapFile) { throw 'profile needs -FireDacExe and -MapFile' }
+  $zoned = if ($NoZoned) { @('notz') } else { @() }
+  & (Join-Path $BenchDir 'tools\sample-windows.ps1') -FilePath $FireDacExe -MapFile $MapFile -Arguments ($Arguments + $zoned)
+}
+
 # Alternates FireDAC, FireDAC tuned and .NET so that drift on the machine hits all three alike.
 function Invoke-Rounds {
   param(
