@@ -26,6 +26,7 @@ uses
   System.Diagnostics
   {$IFDEF POSIX}
   , Posix.Base
+  , Posix.SysTypes
   , Posix.Iconv
   {$ENDIF}
   ;
