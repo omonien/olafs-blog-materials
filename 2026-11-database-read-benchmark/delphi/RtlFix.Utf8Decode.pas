@@ -46,24 +46,9 @@ function Utf8ToUtf16(AFlags: Cardinal; ASource: PAnsiChar; ASourceLen: Integer;
   ADest: PWideChar; ADestLen: Integer): Integer;
 var
   LSource, LSourceEnd: PByte;
-  LCount, LNeed, i: Integer;
+  LCount, LNeed, LUnits, i: Integer;
   LLow, LHigh, LLead: Byte;
   LCode: Cardinal;
-  LValid: Boolean;
-
-  // Writes one UTF-16 code unit, or only counts it when no destination is given.
-  function Put(const AChar: WideChar): Boolean;
-  begin
-    if ADestLen > 0 then
-    begin
-      if LCount >= ADestLen then
-        Exit(False);
-      ADest[LCount] := AChar;
-    end;
-    Inc(LCount);
-    Result := True;
-  end;
-
 begin
   Result := 0;
   if ASource = nil then
@@ -84,8 +69,14 @@ begin
     Inc(LSource);
     if LLead < $80 then
     begin
-      if not Put(WideChar(LLead)) then
-        Exit(0);
+      // ASCII, the common case: one byte, one code unit.
+      if ADestLen > 0 then
+      begin
+        if LCount >= ADestLen then
+          Exit(0);
+        ADest[LCount] := WideChar(LLead);
+      end;
+      Inc(LCount);
       Continue;
     end;
     // The allowed range of the second byte rules out overlong forms, surrogates and code points above U+10FFFF.
@@ -132,16 +123,15 @@ begin
           LCode := LLead and $07;
         end;
     else
-      LNeed := 0;
+      LNeed := -1; // not a lead byte
       LCode := 0;
     end;
-    LValid := LNeed > 0;
     for i := 1 to LNeed do
     begin
       // A byte outside the range ends the maximal subpart; it is not consumed and starts the next sequence.
       if (LSource >= LSourceEnd) or (LSource^ < LLow) or (LSource^ > LHigh) then
       begin
-        LValid := False;
+        LNeed := -1;
         Break;
       end;
       LCode := (LCode shl 6) or (LSource^ and $3F);
@@ -149,21 +139,30 @@ begin
       LLow := $80;
       LHigh := $BF;
     end;
-    if not LValid then
+    if LNeed < 0 then
     begin
       if (AFlags and cErrInvalidChars) <> 0 then
         Exit(0);
-      if not Put(cReplacementChar) then
-        Exit(0);
-    end
-    else if LCode >= $10000 then
+      LCode := Ord(cReplacementChar);
+    end;
+    if LCode >= $10000 then
+      LUnits := 2
+    else
+      LUnits := 1;
+    if ADestLen > 0 then
     begin
-      Dec(LCode, $10000);
-      if not Put(WideChar($D800 + (LCode shr 10))) or not Put(WideChar($DC00 + (LCode and $3FF))) then
+      if LCount + LUnits > ADestLen then
         Exit(0);
-    end
-    else if not Put(WideChar(LCode)) then
-      Exit(0);
+      if LUnits = 2 then
+      begin
+        Dec(LCode, $10000);
+        ADest[LCount] := WideChar($D800 + (LCode shr 10));
+        ADest[LCount + 1] := WideChar($DC00 + (LCode and $3FF));
+      end
+      else
+        ADest[LCount] := WideChar(LCode);
+    end;
+    Inc(LCount, LUnits);
   end;
   Result := LCount;
 end;
