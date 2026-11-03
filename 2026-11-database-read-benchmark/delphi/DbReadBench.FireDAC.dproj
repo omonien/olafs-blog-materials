@@ -4,11 +4,11 @@
         <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <AppType>Console</AppType>
-        <MainSource>FirebirdBench.FireDAC.dpr</MainSource>
+        <MainSource>DbReadBench.FireDAC.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
-        <ProjectName Condition="'$(ProjectName)'==''">FirebirdBench.FireDAC</ProjectName>
+        <ProjectName Condition="'$(ProjectName)'==''">DbReadBench.FireDAC</ProjectName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -29,7 +29,7 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <SanitizedProjectName>FirebirdBench_FireDAC</SanitizedProjectName>
+        <SanitizedProjectName>DbReadBench_FireDAC</SanitizedProjectName>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <DCC_ExeOutput>.\build\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_DcuOutput>.\build\$(Platform)\$(Config)\dcu</DCC_DcuOutput>
@@ -59,7 +59,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">FirebirdBench.FireDAC.dpr</Source>
+                    <Source Name="MainSource">DbReadBench.FireDAC.dpr</Source>
                 </Source>
             </Delphi.Personality>
             <Platforms>
