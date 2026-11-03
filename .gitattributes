@@ -1,0 +1,4 @@
+# Delphi needs CRLF in its sources, regardless of the checkout platform.
+*.pas     text eol=crlf
+*.dpr     text eol=crlf
+*.dproj   text eol=crlf
