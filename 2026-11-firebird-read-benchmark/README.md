@@ -26,7 +26,7 @@ On Windows the network path limits both drivers; the numbers say nothing about t
 
 ## Why FireDAC is slower on macOS
 
-A five second CPU profile (`sample`) of the FireDAC program, symbols resolved with the linker map (`tools/resolve-ld64-map.ps1`):
+A five second CPU profile (`sample`) of the FireDAC program, symbols resolved with the linker map (`tools/resolve-ld64-map.ps1`). The items overlap slightly, because memory management also shows up inside the other items:
 
 | Share of CPU | Where |
 | ---: | --- |
@@ -48,7 +48,7 @@ Not measured: FireDAC on Windows without a network limit. Since Windows takes th
 
 ## The time zone trap
 
-With the `TIMESTAMP WITH TIME ZONE` column FireDAC on macOS did not finish a single pass within ten minutes. The profile shows `libfbclient` trying to load ICU through `dlopen` for every decoded time stamp (`decodeTimeStampTz` → `TimeZoneUtil::decodeTimeStamp` → `UnicodeUtil::getConversionICU`), failing, and not caching the failure. This happened with the client library taken from the official package without installing the framework. With a regularly installed Firebird client (as on the Windows VM) the column costs nothing special. The .NET provider decodes time zones itself.
+With the `TIMESTAMP WITH TIME ZONE` column FireDAC on macOS did not finish a single pass within ten minutes. The profile shows `libfbclient` trying to load ICU through `dlopen` for every decoded time stamp (`decodeTimeStampTz` → `TimeZoneUtil::decodeTimeStamp` → `UnicodeUtil::getConversionICU`), failing, and not caching the failure. This happened with the client library taken from the official package without installing the framework. With a regularly installed Firebird client (as on the Windows VM) the test with this column ran normally. The .NET provider decodes time zones itself.
 
 ## Reproduce
 
