@@ -49,8 +49,8 @@ TEXT = {
         "micro_sub": "Nanosekunden je Aufruf, 38 Byte, 6 Millionen Aufrufe. Weniger ist besser.",
         "micro_rows": ["UnicodeFromLocaleChars (RTL)", "Utf8ToUnicode (RTL)", "TEncoding.UTF8.GetString (RTL)",
                        "iconv, Konverter wiederverwendet", "Fix-Vorschlag"],
-        "micro_ref": "Windows-RTL: 139 ns",
-        "micro_note": "Der Fix braucht unter Windows 135 ns, die RTL dort 139 ns.",
+        "micro_ref": "Windows-RTL: 57 ns",
+        "micro_note": "Unter Windows braucht der Fix 59 ns, die RTL 57 ns. macOS-Last während der Messung: etwa 10.",
         "ns": "{0} ns",
         "profile_title": "Wohin die Zeit von FireDAC geht, Windows lokal",
         "profile_sub": "Anteil der Stichproben des lesenden Threads, Wanduhr einschließlich Warten.",
@@ -80,8 +80,8 @@ TEXT = {
         "micro_sub": "Nanoseconds per call, 38 bytes, 6 million calls. Lower is better.",
         "micro_rows": ["UnicodeFromLocaleChars (RTL)", "Utf8ToUnicode (RTL)", "TEncoding.UTF8.GetString (RTL)",
                        "iconv, converter reused", "Proposed fix"],
-        "micro_ref": "Windows RTL: 139 ns",
-        "micro_note": "On Windows the fix takes 135 ns, the RTL 139 ns.",
+        "micro_ref": "Windows RTL: 57 ns",
+        "micro_note": "On Windows the fix takes 59 ns, the RTL 57 ns. macOS load average during the run: about 10.",
         "ns": "{0} ns",
         "profile_title": "Where FireDAC spends its time, Windows local",
         "profile_sub": "Share of the stack samples of the reading thread, wall clock including waits.",
@@ -101,8 +101,8 @@ THROUGHPUT = [
 # Client CPU seconds of one program run (6 million rows) on Windows local.
 CPU = [("cpu_fb_tz", 63.7, 26.0), ("cpu_fb", 49.4, 24.8), ("cpu_pg", 27.2, 6.7)]
 CPU_FIREBIRD_SERVER = 35.7  # server CPU seconds while .NET read the same 6 million rows
-MICRO_MAC = [3339, 3323, 7929, 2027, 389]
-MICRO_WINDOWS_RTL = 139
+MICRO_MAC = [1787, 2228, 4844, 1016, 122]
+MICRO_WINDOWS_RTL = 57
 # Self time by module, grouped: client library, program, Windows system code, waiting, other.
 PROFILE = [[41.5, 37.4, 9.9, 3.8, 7.3], [1.9, 75.9, 7.6, 14.2, 0.3]]
 PROFILE_KEYS = ["client", "firedac", "system", "wait", "other"]
@@ -250,12 +250,12 @@ def micro(lang):
     t = TEXT[lang]
     head, y = header(lang, t["micro_title"], t["micro_sub"], None)
     x0, plot = 250, WIDTH - 250 - 70
-    scale = plot / 8000
+    scale = plot / 5000
     out = [head]
     bar_h, gap = 18, 14
     top = y + 22
     bottom = top + len(MICRO_MAC) * (bar_h + gap) - gap + 8
-    out.append(ticks(x0, scale, top, bottom, [0, 2000, 4000, 6000, 8000], lambda v: number(v, lang)))
+    out.append(ticks(x0, scale, top, bottom, [0, 1000, 2000, 3000, 4000, 5000], lambda v: number(v, lang)))
     ref_x = x0 + MICRO_WINDOWS_RTL * scale
     out.append(f'<line class="ref" x1="{ref_x:.1f}" y1="{top - 14}" x2="{ref_x:.1f}" y2="{bottom}" stroke-width="1.5"/>')
     out.append(txt(ref_x + 6, top - 4, t["micro_ref"], "t2", 12))

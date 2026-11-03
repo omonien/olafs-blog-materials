@@ -4,7 +4,7 @@ Sources, scripts and raw data behind posts on the [Developer Experts blog](https
 
 | Folder | Post | Topic |
 | --- | --- | --- |
-| [2026-11-database-read-benchmark](2026-11-database-read-benchmark/) | Interessant enttäuschend (DE) / Interestingly disappointing (EN) | Reading 2 million rows from Firebird, PostgreSQL and SQL Server with FireDAC and with the .NET providers, and why macOS makes a difference |
+| [2026-11-database-read-benchmark](2026-11-database-read-benchmark/) | Interessant enttäuschend (DE) / Interestingly disappointing (EN) | Reading 2 million rows from Firebird, PostgreSQL and SQL Server with FireDAC and with the .NET providers, why FireDAC falls behind on macOS and on Windows, and a proposed UTF-8 fix for the RTL |
 
 **Author:** Olaf Monien, Embarcadero MVP · [Developer Experts, LLC](https://www.developer-experts.net)
 
