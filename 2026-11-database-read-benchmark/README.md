@@ -68,13 +68,15 @@ The switch `tuned` (`RowsetSize` 10,000, `FetchOptions.Items` without `fiMeta`, 
 - **Firebird:** 42 % inside `fbclient.dll`, which FireDAC calls through the XSQLDA interface, one `isc_dsql_fetch` per row. Inside FireDAC: every time zone value is converted through `IUtil.decodeTimeStampTzEx` and ICU (9 %), although FireDAC binds these columns to the EXTENDED types that carry the offset; `INT128` goes through text (`IInt128.toString`, ANSI to UTF-16, `FDStr2BCD`; 8 %); the DatS row cache with its notifications takes 7 %, although the dataset is unidirectional.
 - **PostgreSQL:** `libpq` takes only 2 %, and FireDAC reads the binary format. With `fmOnDemand` FireDAC declares a server cursor and sends one `FETCH FORWARD <RowsetSize>` per rowset, so server and client take turns; 14 % of the samples wait for the next rowset. A streaming path with `PQsetSingleRowMode` exists in the driver but is never switched on. The row cache takes about 15 %.
 
+These findings, with line references and proposals, are reported to Embarcadero as [RSS-6254](https://embt.atlassian.net/servicedesk/customer/portal/1/RSS-6254). Reading both Quality Portal reports needs a free account there.
+
 ## A proposed fix for the RTL on macOS
 
 `delphi/RtlFix.Utf8Decode.pas` decodes UTF-8 to UTF-16 directly, with the contract of `UnicodeFromLocaleChars` (destination length 0 only counts, source length -1 counts the terminator, a too small destination returns 0, U+FFFD per maximal subpart or 0 with `MB_ERR_INVALID_CHARS`) and an ASCII fast path. `delphi/Utf8DecodeBench.dpr` measures it against the RTL and compares the results on eleven test vectors.
 
 ![UTF-8 decode on macOS](charts/utf8-decode-en.svg)
 
-Six million decodes of a 38-byte string, nanoseconds per call: on macOS the RTL needs 1,787, the fix 122; on Windows the RTL needs 57, the fix 59. On Windows the results match in 19 of 22 cases, the three differences are only the number of U+FFFD. On macOS they match in 15 of 22: there the RTL drops a valid character before a truncated sequence, returns nothing for a truncated four-byte sequence, turns a value above U+10FFFF into `?` even with `MB_ERR_INVALID_CHARS`, and collapses invalid sequences into one U+FFFD. The full table is in the results file.
+Six million decodes of a 38-byte string, nanoseconds per call: on macOS the RTL needs 1,787, the fix 122; on Windows the RTL needs 57, the fix 59. On Windows the results match in 19 of 22 cases, the three differences are only the number of U+FFFD. On macOS they match in 15 of 22: there the RTL drops a valid character before a truncated sequence, returns nothing for a truncated four-byte sequence, turns a value above U+10FFFF into `?` even with `MB_ERR_INVALID_CHARS`, and collapses invalid sequences into one U+FFFD. The full table is in the results file. Reported to Embarcadero as [RSS-6253](https://embt.atlassian.net/servicedesk/customer/portal/1/RSS-6253).
 
 ## The time zone trap (Firebird on macOS)
 
