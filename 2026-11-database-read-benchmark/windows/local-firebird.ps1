@@ -2,11 +2,13 @@
 # setup:   copies an installed Firebird 5 into a work folder and gives the copy its own port, IPC name and
 #          SYSDBA password, so the installed service stays untouched; then creates and fills bench.fdb.
 # measure: starts the copy, runs FireDAC (default and tuned) and .NET against it, and stops it again.
+# profile: starts the copy and samples a FireDAC run with tools\sample-windows.ps1 (needs the .map of the build).
 # Example: .\local-firebird.ps1 setup
 #          .\local-firebird.ps1 measure -FireDacExe <path>\DbReadBench.FireDAC.exe
 param(
-  [Parameter(Mandatory)][ValidateSet('setup', 'measure')][string]$Phase,
+  [Parameter(Mandatory)][ValidateSet('setup', 'measure', 'profile')][string]$Phase,
   [string]$FireDacExe,
+  [string]$MapFile,
   [string]$FirebirdDir = 'C:\Program Files\Firebird\Firebird_5_0',
   [string]$WorkDir = (Join-Path $env:LOCALAPPDATA 'dbbench-local'),
   [int]$Port = 53051,
@@ -71,6 +73,15 @@ if ($Phase -eq 'setup') {
     Invoke-Native $isql @('-q', '-user', 'SYSDBA', '-password', $password, '-ch', 'UTF8',
       '-i', (Join-Path $BenchDir 'firebird\fill.sql'), "127.0.0.1/${Port}:$database")
     'filled in {0:F0} s' -f $watch.Elapsed.TotalSeconds
+  }
+  finally { Stop-Process -Id $server.Id -Force }
+}
+elseif ($Phase -eq 'profile') {
+  if (-not $FireDacExe -or -not $MapFile) { throw 'profile needs -FireDacExe and -MapFile' }
+  $server = Start-Firebird
+  try {
+    $arguments = @('fb', '127.0.0.1', "$Port", $database, 'SYSDBA', $password) + $(if ($NoZoned) { @('notz') } else { @() })
+    & (Join-Path $BenchDir 'tools\sample-windows.ps1') -FilePath $FireDacExe -MapFile $MapFile -Arguments $arguments
   }
   finally { Stop-Process -Id $server.Id -Force }
 }
