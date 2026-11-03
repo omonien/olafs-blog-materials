@@ -119,36 +119,51 @@ begin
   Report('Proposed fix (RtlFix.Utf8Decode)', LWatch);
 end;
 
+/// <summary>Turns "41 E2 82" into the bytes $41 $E2 $82.</summary>
+function HexToBytes(const AHex: string): TBytes;
+var
+  LParts: TArray<string>;
+  i: Integer;
+begin
+  LParts := AHex.Split([' ']);
+  SetLength(Result, Length(LParts));
+  for i := 0 to High(LParts) do
+    Result[i] := StrToInt('$' + LParts[i]);
+end;
+
 /// <summary>Compares the proposed fix with the RTL on valid and invalid UTF-8; returns the number of differences.</summary>
 function CompareWithRtl: Integer;
 const
-  cVectors: array[0..10] of RawByteString = (
-    'Gr'#$C3#$BC#$C3#$9F'e aus '#$C3#$96'sterreich',   // two-byte sequences
-    #$E2#$82#$AC' '#$E6#$BC#$A2' '#$F0#$9F#$98#$80,      // three and four bytes, surrogate pair
-    'A'#$80'B',                                          // lone continuation byte
-    'A'#$E2#$82,                                         // truncated at the end
-    #$E2#$82'A',                                         // truncated before ASCII
-    #$C0#$AF,                                            // overlong form
-    #$E0#$80#$80,                                        // overlong three-byte form
-    #$ED#$A0#$80,                                        // encoded surrogate
-    #$F4#$90#$80#$80,                                    // above U+10FFFF
-    #$FF'x',                                             // invalid lead byte
-    #$F0#$9F#$98);                                       // truncated four-byte sequence
+  // Hex bytes, so the compiler cannot reinterpret them through a code page.
+  cVectors: array[0..10] of string = (
+    '47 72 C3 BC C3 9F 65 20 C3 96',   // two-byte sequences
+    'E2 82 AC 20 E6 BC A2 20 F0 9F 98 80', // three and four bytes, surrogate pair
+    '41 80 42',                        // lone continuation byte
+    '41 E2 82',                        // truncated at the end
+    'E2 82 41',                        // truncated before ASCII
+    'C0 AF',                           // overlong form
+    'E0 80 80',                        // overlong three-byte form
+    'ED A0 80',                        // encoded surrogate
+    'F4 90 80 80',                     // above U+10FFFF
+    'FF 78',                           // invalid lead byte
+    'F0 9F 98');                       // truncated four-byte sequence
 var
-  LVector: RawByteString;
+  LHex: string;
+  LVector: TBytes;
   LFlags: Cardinal;
   LRtl, LFixed: array[0..63] of WideChar;
   LRtlCount, LFixedCount, LRtlLen, LFixedLen, j: Integer;
   LSame: Boolean;
 begin
   Result := 0;
-  for LVector in cVectors do
+  for LHex in cVectors do
     for LFlags in [0, cErrInvalidChars] do
     begin
-      LRtlLen := UnicodeFromLocaleChars(CP_UTF8, LFlags, PAnsiChar(LVector), Length(LVector), nil, 0);
-      LFixedLen := UnicodeFromLocaleCharsFixed(CP_UTF8, LFlags, PAnsiChar(LVector), Length(LVector), nil, 0);
-      LRtlCount := UnicodeFromLocaleChars(CP_UTF8, LFlags, PAnsiChar(LVector), Length(LVector), @LRtl[0], Length(LRtl));
-      LFixedCount := UnicodeFromLocaleCharsFixed(CP_UTF8, LFlags, PAnsiChar(LVector), Length(LVector), @LFixed[0], Length(LFixed));
+      LVector := HexToBytes(LHex);
+      LRtlLen := UnicodeFromLocaleChars(CP_UTF8, LFlags, PAnsiChar(@LVector[0]), Length(LVector), nil, 0);
+      LFixedLen := UnicodeFromLocaleCharsFixed(CP_UTF8, LFlags, PAnsiChar(@LVector[0]), Length(LVector), nil, 0);
+      LRtlCount := UnicodeFromLocaleChars(CP_UTF8, LFlags, PAnsiChar(@LVector[0]), Length(LVector), @LRtl[0], Length(LRtl));
+      LFixedCount := UnicodeFromLocaleCharsFixed(CP_UTF8, LFlags, PAnsiChar(@LVector[0]), Length(LVector), @LFixed[0], Length(LFixed));
       LSame := (LRtlLen = LFixedLen) and (LRtlCount = LFixedCount);
       if LSame then
         for j := 0 to LRtlCount - 1 do
