@@ -6,10 +6,12 @@
 /// <remarks>
 /// Decodes the same short UTF-8 string six million times, about as many
 /// string decodes as one pass of the database benchmark, through
-/// System.UnicodeFromLocaleChars, System.Utf8ToUnicode and TEncoding.UTF8.
-/// On POSIX it also measures iconv with one reused converter, which is what
-/// UnicodeFromLocaleChars could do with a cache. Every path is checked for
-/// the same decoded text before it is timed.
+/// System.UnicodeFromLocaleChars, System.Utf8ToUnicode, TEncoding.UTF8 and
+/// the proposed fix in RtlFix.Utf8Decode. On POSIX it also measures iconv
+/// with one reused converter, which is what UnicodeFromLocaleChars could do
+/// with a cache. Every path is checked for the same decoded text before it
+/// is timed, and the proposed fix is compared with the RTL on test vectors
+/// including invalid UTF-8.
 /// </remarks>
 ///
 /// <copyright>
@@ -23,7 +25,8 @@ program Utf8DecodeBench;
 
 uses
   System.SysUtils,
-  System.Diagnostics
+  System.Diagnostics,
+  RtlFix.Utf8Decode in 'RtlFix.Utf8Decode.pas'
   {$IFDEF POSIX}
   , Posix.Base
   , Posix.SysTypes
@@ -101,6 +104,71 @@ begin
   Report('TEncoding.UTF8.GetString', LWatch);
 end;
 
+/// <summary>The proposed fix: decode UTF-8 directly instead of through iconv.</summary>
+procedure BenchProposedFix;
+var
+  i, LCount: Integer;
+  LWatch: TStopwatch;
+begin
+  LCount := UnicodeFromLocaleCharsFixed(CP_UTF8, 0, PAnsiChar(@GSource[0]), Length(GSource), @GDest[0], Length(GDest));
+  Verify('UnicodeFromLocaleCharsFixed', LCount);
+  LWatch := TStopwatch.StartNew;
+  for i := 1 to cCalls do
+    Inc(GChecksum, UnicodeFromLocaleCharsFixed(CP_UTF8, 0, PAnsiChar(@GSource[0]), Length(GSource), @GDest[0], Length(GDest)));
+  LWatch.Stop;
+  Report('Proposed fix (RtlFix.Utf8Decode)', LWatch);
+end;
+
+/// <summary>Compares the proposed fix with the RTL on valid and invalid UTF-8; returns the number of differences.</summary>
+function CompareWithRtl: Integer;
+const
+  cVectors: array[0..10] of RawByteString = (
+    'Gr'#$C3#$BC#$C3#$9F'e aus '#$C3#$96'sterreich',   // two-byte sequences
+    #$E2#$82#$AC' '#$E6#$BC#$A2' '#$F0#$9F#$98#$80,      // three and four bytes, surrogate pair
+    'A'#$80'B',                                          // lone continuation byte
+    'A'#$E2#$82,                                         // truncated at the end
+    #$E2#$82'A',                                         // truncated before ASCII
+    #$C0#$AF,                                            // overlong form
+    #$E0#$80#$80,                                        // overlong three-byte form
+    #$ED#$A0#$80,                                        // encoded surrogate
+    #$F4#$90#$80#$80,                                    // above U+10FFFF
+    #$FF'x',                                             // invalid lead byte
+    #$F0#$9F#$98);                                       // truncated four-byte sequence
+var
+  LVector: RawByteString;
+  LFlags: Cardinal;
+  LRtl, LFixed: array[0..63] of WideChar;
+  LRtlCount, LFixedCount, LRtlLen, LFixedLen, j: Integer;
+  LSame: Boolean;
+begin
+  Result := 0;
+  for LVector in cVectors do
+    for LFlags in [0, cErrInvalidChars] do
+    begin
+      LRtlLen := UnicodeFromLocaleChars(CP_UTF8, LFlags, PAnsiChar(LVector), Length(LVector), nil, 0);
+      LFixedLen := UnicodeFromLocaleCharsFixed(CP_UTF8, LFlags, PAnsiChar(LVector), Length(LVector), nil, 0);
+      LRtlCount := UnicodeFromLocaleChars(CP_UTF8, LFlags, PAnsiChar(LVector), Length(LVector), @LRtl[0], Length(LRtl));
+      LFixedCount := UnicodeFromLocaleCharsFixed(CP_UTF8, LFlags, PAnsiChar(LVector), Length(LVector), @LFixed[0], Length(LFixed));
+      LSame := (LRtlLen = LFixedLen) and (LRtlCount = LFixedCount);
+      if LSame then
+        for j := 0 to LRtlCount - 1 do
+          if LRtl[j] <> LFixed[j] then
+            LSame := False;
+      if not LSame then
+      begin
+        Inc(Result);
+        Write(Format('  differs: %d bytes, flags %d: RTL %d/%d [', [Length(LVector), LFlags, LRtlLen, LRtlCount]));
+        for j := 0 to LRtlCount - 1 do
+          Write(Format(' %.4x', [Ord(LRtl[j])]));
+        Write(' ], fix ', LFixedLen, '/', LFixedCount, ' [');
+        for j := 0 to LFixedCount - 1 do
+          Write(Format(' %.4x', [Ord(LFixed[j])]));
+        Writeln(' ]');
+      end;
+    end;
+  Writeln(Format('Conformance: %d of %d cases identical to the RTL', [2 * Length(cVectors) - Result, 2 * Length(cVectors)]));
+end;
+
 {$IFDEF POSIX}
 /// <summary>One converter opened once and reset per call: the cost UnicodeFromLocaleChars could have.</summary>
 procedure BenchCachedIconv;
@@ -147,10 +215,12 @@ begin
     BenchUnicodeFromLocaleChars;
     BenchUtf8ToUnicode;
     BenchTEncoding;
+    BenchProposedFix;
     {$IFDEF POSIX}
     BenchCachedIconv;
     {$ENDIF}
     Writeln('Checksum: ', GChecksum);
+    CompareWithRtl;
   except
     on E: Exception do
     begin
