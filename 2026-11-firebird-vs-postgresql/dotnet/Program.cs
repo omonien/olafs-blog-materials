@@ -218,42 +218,59 @@ sealed class Db
     }
 }
 
-/// <summary>CPU time of this process and, optionally, of the server processes, between Start and Stop.</summary>
+/// <summary>
+/// CPU time of this process and, optionally, of the server processes, between Start and Stop. The server processes are
+/// sampled every 200 ms per process ID, so that processes which start and end in between (autovacuum, parallel
+/// workers) count as well; a process that ends loses at most its last 200 ms.
+/// </summary>
 sealed class CpuMeter
 {
     readonly string? _serverProcess;
-    TimeSpan _client, _server;
+    readonly Dictionary<int, (TimeSpan First, TimeSpan Last)> _seen = [];
+    TimeSpan _client;
+    Timer? _timer;
 
     public CpuMeter(Db db) => _serverProcess = db.Opt("serverproc", "") is { Length: > 0 } name ? name : null;
 
-    static TimeSpan ServerTime(string? name)
+    void Sample(bool baseline)
     {
-        if (name == null) return TimeSpan.Zero;
-        var total = TimeSpan.Zero;
-        // PostgreSQL retitles its processes ("postgres: walwriter"), and on Linux .NET takes the name from that title.
-        foreach (var p in System.Diagnostics.Process.GetProcesses())
+        lock (_seen)
         {
-            if (!p.ProcessName.StartsWith(name, StringComparison.Ordinal)) { p.Dispose(); continue; }
-            try { total += p.TotalProcessorTime; }
-            catch (InvalidOperationException) { } // ended meanwhile
-            catch (System.ComponentModel.Win32Exception) { } // not accessible
-            finally { p.Dispose(); }
+            // PostgreSQL retitles its processes ("postgres: walwriter"), and on Linux .NET takes the name from that title.
+            foreach (var p in System.Diagnostics.Process.GetProcesses())
+            {
+                try
+                {
+                    if (!p.ProcessName.StartsWith(_serverProcess!, StringComparison.Ordinal)) continue;
+                    var cpu = p.TotalProcessorTime;
+                    _seen[p.Id] = _seen.TryGetValue(p.Id, out var known) ? (known.First, cpu) : (baseline ? cpu : TimeSpan.Zero, cpu);
+                }
+                catch (InvalidOperationException) { } // ended meanwhile
+                catch (System.ComponentModel.Win32Exception) { } // not accessible
+                finally { p.Dispose(); }
+            }
         }
-        return total;
     }
 
     public void Start()
     {
         _client = System.Diagnostics.Process.GetCurrentProcess().TotalProcessorTime;
-        _server = ServerTime(_serverProcess);
+        if (_serverProcess == null) return;
+        lock (_seen) _seen.Clear();
+        Sample(baseline: true);
+        _timer = new Timer(_ => Sample(baseline: false), null, 200, 200);
     }
 
     public string Stop()
     {
         var client = System.Diagnostics.Process.GetCurrentProcess().TotalProcessorTime - _client;
         var text = $"client_cpu_s={client.TotalSeconds:F2}";
-        if (_serverProcess != null) text += $" server_cpu_s={(ServerTime(_serverProcess) - _server).TotalSeconds:F2}";
-        return text;
+        if (_serverProcess == null) return text;
+        _timer?.Dispose();
+        Sample(baseline: false);
+        TimeSpan server;
+        lock (_seen) server = _seen.Values.Aggregate(TimeSpan.Zero, (sum, v) => sum + (v.Last - v.First));
+        return text + $" server_cpu_s={server.TotalSeconds:F2}";
     }
 }
 
@@ -276,6 +293,10 @@ static class Runner
         long start = 0;
         var cpu = new CpuMeter(db);
         using var barrier = new Barrier(clients, _ => { cpu.Start(); start = System.Diagnostics.Stopwatch.GetTimestamp(); });
+        // CPU is read when the last client has finished and before any connection closes: a PostgreSQL backend ends
+        // with its connection and takes its CPU time with it.
+        var cpuText = "";
+        using var finished = new Barrier(clients, _ => cpuText = cpu.Stop());
         var latencies = new List<int>[clients];
         long total = 0, retries = 0, failed = 0;
         Exception? error = null;
@@ -314,18 +335,19 @@ static class Runner
                 Interlocked.Add(ref total, done);
                 Interlocked.Add(ref retries, retried);
                 Interlocked.Add(ref failed, lost);
+                finished.SignalAndWait();
             }
             catch (Exception e)
             {
                 error ??= e;
                 barrier.RemoveParticipant();
+                finished.RemoveParticipant();
             }
             finally { work?.Dispose(); }
         }) { IsBackground = true }).ToList();
         threads.ForEach(t => t.Start());
         threads.ForEach(t => t.Join());
         if (error != null) throw new InvalidOperationException("a client failed", error);
-        var cpuText = cpu.Stop();
         var all = latencies.SelectMany(l => l).ToArray();
         Array.Sort(all);
         double Pct(double q) => all.Length == 0 ? 0 : all[Math.Min(all.Length - 1, (int)(q * all.Length))] / 1000.0;

@@ -107,7 +107,7 @@ round() {
   [ $((n % 2)) -eq 0 ] && order=(pg fb)
   log "ROUND $n order ${order[*]}"
   local steps=(
-    "read"
+    "read" "read wirecrypt=on"
     "insert clients=1" "insert clients=8"
     "insert clients=1 durability=relaxed" "insert clients=8 durability=relaxed"
     "bulk rows=100000 mode=prepared" "bulk rows=500000 mode=native"
@@ -119,6 +119,8 @@ round() {
   steps+=("json query=lookup-like" "json query=lookup-client" "json query=agg-client")
   for step in "${steps[@]}"; do
     for e in "${order[@]}"; do
+      # Wire encryption is a Firebird setting; PostgreSQL runs without TLS throughout.
+      [[ $e == pg && $step == *wirecrypt=on* ]] && continue
       # shellcheck disable=SC2086
       bench $e $step
     done
