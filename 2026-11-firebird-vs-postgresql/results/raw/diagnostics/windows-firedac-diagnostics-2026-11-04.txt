@@ -1,0 +1,70 @@
+Diagnostic runs of delphi/DbCompareBench.FireDAC.dpr on the Windows VM, 4 November 2026, before the FireDAC series.
+None of these numbers is part of the medians (the file is not a .log, tools/summarize.py does not read it).
+Short runs (1 to 5 s), Mac load average between about 280 and 920, VM CPU often above 90 %.
+
+1. Trial run (toolRun b2660f19, first build of the program): 2 clients, 3 s after 1 s warm-up, pair mode.
+   fb probe: wire_encrypted=FALSE, write_tx_isolation_mode=4 (read consistency), write_tx_lock_timeout=0 (NOWAIT)
+   pg probe: connection_ssl=false, synchronous_commit=on
+   insert: fb 148.3 tps, pg 77.0 tps; select-only: fb 225.3, pg 110.3; TPC-B like: fb 11.7 tps with retries=57 failed=1, pg 20.7
+   Two findings: Firebird transactions ran with NOWAIT, and the Firebird insert rate was higher than with the .NET client.
+
+2. NOWAIT. FireDAC builds the Firebird transaction parameters in TFDPhysIBTransactionBase.InternalChanged
+   (FireDAC.Phys.IBBase, Delphi 13: lines 2036 to 2040): unless TxOptions.Params names "wait" or "nowait", UpdateOptions.LockWait decides,
+   and its default False means NOWAIT. The program sets UpdateOptions.LockWait := True since; probe then shows
+   write_tx_lock_timeout=-1.
+
+3. Run cde887bb (LockWait on, statements still prepared outside a transaction):
+   TPC-B like, 4 clients, 5 s: 15 transactions in about 63 s, retries=9, txns in the measured window 0.
+   FireDAC monitor trace of one insert client (trace=fd-fb-insert.trc, 923 lines, 1 s run):
+   - line 35: isc_start_multiple [params="write,read_committed,rec_version,wait"], issued inside "Prepare" of the INSERT
+     (FireDAC starts a transaction for the prepare on its own: TFDPhysIBTransactionBase.InternalNotify, notification
+     cpBeforeCmdPrepare, FireDAC.Phys.IBBase lines 2108 to 2113)
+   - then for each of the 96 inserts: StartTransaction -> "SAVEPOINT SP_n", Execute, Commit -> "RELEASE SAVEPOINT SP_n"
+   - line 920: the only isc_commit_transaction, at the end of the run
+   So every StartTransaction/Commit of the client was a savepoint inside one physical transaction, nothing was committed
+   before the end, and each client kept its row locks until then. That explains the high insert rate of run 1 (no commit,
+   no flush) and the stalls and deadlock retries in TPC-B like (Firebird checks for deadlocks after DeadlockTimeout, 10 s).
+   The probe reproduces the cause: after an explicit Prepare outside a transaction, InTransaction is True with Firebird
+   and False with PostgreSQL.
+
+4. Fix: the client prepares its statements inside an explicit transaction and commits it before the run.
+   Run c8b6faa4: probe in_transaction_after_prepare=True (the probe still shows the default behaviour); TPC-B like,
+   4 clients, 5 s: 76 transactions, retries=0. Trace of one insert client (130 lines): per insert isc_start_multiple,
+   isc_dsql_prepare, isc_dsql_execute2, isc_commit_transaction. The statement is prepared again in every transaction:
+   a commit without retaining takes all commands of the transaction offline first (TFDPhysIBTransactionBase.InternalCommit,
+   DisconnectCommands(nil, dmOffline), FireDAC.Phys.IBBase lines 2062 to 2070). That is FireDAC's default and stays in the
+   measurement.
+
+5. PostgreSQL select (run 6db64430, trace=fd-pg-select.trc, default FetchOptions): Prepare of the SELECT prepares
+   'DECLARE "4STM" NO SCROLL CURSOR FOR SELECT ...' and 'FETCH FORWARD 50 FROM "4STM"' (after 'SET cursor_tuple_fraction TO 1.0').
+   Each Open outside a transaction then sends: BEGIN, the DECLARE, FETCH, FETCH, CLOSE "4STM", COMMIT, six round trips
+   for one row. The first Open also reads the primary key fields of the table through a second cursor.
+   probe: in_transaction_after_prepare=False.
+
+6. cursor=default (FetchOptions.CursorKind := ckDefault on the SELECT), run 9765509f, PostgreSQL, 1 client, 5 s after 1 s:
+   cursor=automatic (FireDAC default) 122.2 tps, cursor=default 406.8 tps. Trace (fd-pg-select-plain.trc): one
+   PQexecPrepared per Open, no BEGIN, DECLARE, FETCH, CLOSE or COMMIT.
+
+7. FDManager. Two measured steps with 16 PostgreSQL clients failed (round 1, TPC-B like: no output, non-zero exit code;
+   round 3, select-only with cursor=default: no output for more than 4 minutes). The program had not activated FDManager
+   before its threads opened their connections, which "Multithreading (FireDAC)" in the RAD Studio documentation asks for
+   (also TFDManager.Active: a multithreaded application should activate the manager before its threads connect).
+   Fixed (FDManager.Active := True before the clients start, FDManager.Close at the end); the two steps were repeated
+   with the fixed build and ran normally. The measured loop is unchanged.
+
+8. Open point: a run with trace= does not end after its RESULT line (the trace is complete up to isc_detach_database),
+   with and without the FDManager fix; these runs were ended by the time limit of the Forge. Runs without trace end
+   normally. Not investigated further, the measured runs do not use the trace.
+
+9. Firebird select (run 6e8bfc5f, fixed build, trace=fd-fb-select.trc): per Open isc_dsql_execute2, isc_dsql_fetch,
+   isc_dsql_fetch, isc_dsql_free_statement (DSQL_close), within the one read-only transaction. The statement stays
+   prepared. The first Open also reads the primary key fields of the table (an extra query on the system tables).
+
+10. Firebird TPC-B like (run defee9d6, trace=fd-fb-tpcb.trc, 8 transactions): every transaction starts with
+   isc_start_multiple and prepares all five statements again (isc_dsql_allocate_statement, isc_dsql_prepare,
+   isc_dsql_sql_info, isc_dsql_describe_bind), executes each (isc_dsql_execute2, then isc_dsql_sql_info for the row
+   count), and drops all five (isc_dsql_free_statement DSQL_drop) before isc_commit_transaction.
+
+11. PostgreSQL TPC-B like (run 405374ba, trace=fd-pg-tpcb.trc, 16 transactions): per transaction BEGIN, the account
+   update, DECLARE, FETCH, FETCH, CLOSE, the teller and branch updates, the history insert, COMMIT: ten libpq calls,
+   each a round trip. The prepared statements are reused across transactions.

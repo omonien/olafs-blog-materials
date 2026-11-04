@@ -57,6 +57,15 @@ TEXT = {
         "json_note": "Firebird 5 kennt keine JSON-Funktionen. LIKE trifft hier nur, weil alle Dokumente gleich formatiert sind.",
         "ms": "{0} ms",
         "raw": "Rohdaten und Last: results/",
+        "fd_title": "Derselbe Vergleich mit FireDAC",
+        "fd_sub": "Windows 11 (VM), Transaktionen pro Sekunde, Median aus drei Runden. Mehr ist besser.",
+        "fd_dotnet": ".NET (FirebirdClient, Npgsql), in denselben Läufen",
+        "fd_default": "FireDAC (Delphi 13) mit Standardeinstellungen",
+        "fd_plain": "FireDAC mit FetchOptions.CursorKind = ckDefault",
+        "fd_groups": {("insert", "1"): "Einfügen, dauerhaft, 1 Client", ("insert", "8"): "Einfügen, dauerhaft, 8 Clients",
+                      ("select", "1"): "pgbench nur lesen, 1 Client", ("select", "16"): "pgbench nur lesen, 16 Clients",
+                      ("tpcb", "1"): "TPC-B-ähnlich, 1 Client", ("tpcb", "16"): "TPC-B-ähnlich, 16 Clients"},
+        "fd_note": "FireDAC mit UpdateOptions.LockWait = True und Prepare in einer eigenen Transaktion, siehe README.",
     },
     "en": {
         "dec": ".", "thousands": ",",
@@ -90,18 +99,28 @@ TEXT = {
         "json_note": "Firebird 5 has no JSON functions. LIKE only hits here because all documents are formatted alike.",
         "ms": "{0} ms",
         "raw": "Raw data and load: results/",
+        "fd_title": "The same comparison with FireDAC",
+        "fd_sub": "Windows 11 (VM), transactions per second, median of three rounds. Higher is better.",
+        "fd_dotnet": ".NET (FirebirdClient, Npgsql), in the same runs",
+        "fd_default": "FireDAC (Delphi 13) with default settings",
+        "fd_plain": "FireDAC with FetchOptions.CursorKind = ckDefault",
+        "fd_groups": {("insert", "1"): "insert, durable, 1 client", ("insert", "8"): "insert, durable, 8 clients",
+                      ("select", "1"): "pgbench read only, 1 client", ("select", "16"): "pgbench read only, 16 clients",
+                      ("tpcb", "1"): "TPC-B like, 1 client", ("tpcb", "16"): "TPC-B like, 16 clients"},
+        "fd_note": "FireDAC with UpdateOptions.LockWait = True and Prepare in a transaction of its own, see the README.",
     },
 }
 PLATFORMS = ["mac", "windows"]
 
 
 def load(path):
+    """Lookup of a median; the main charts read the main series of the .NET program, the FireDAC chart its own series."""
     rows = json.loads(path.read_text(encoding="utf-8"))
 
-    def get(platform, test, engine, **params):
+    def get(platform, test, engine, series="main", driver="dotnet", **params):
         for r in rows:
-            if r["platform"] == platform and r["test"] == test and r["engine"] == engine and \
-                    all(r["params"].get(k) == v for k, v in params.items()):
+            if (r["platform"], r.get("series", "main"), r["test"], r["engine"], r.get("driver", "dotnet")) == \
+                    (platform, series, test, engine, driver) and all(r["params"].get(k) == v for k, v in params.items()):
                 return r["median"]
         return None
     return get
@@ -363,14 +382,32 @@ def json_chart(get, lang):
     return svg(y + 30, t["json_title"], "; ".join(desc), "".join(out))
 
 
+def firedac_chart(get, lang):
+    """The FireDAC series on Windows: per client stack one panel with Firebird against PostgreSQL, one scale for all."""
+    t = TEXT[lang]
+
+    def value(engine, driver, test, key, cursor):
+        if test == "insert":
+            return get("windows", "insert", engine, series="firedac", driver=driver, durability="default", clients=key) \
+                if cursor == "automatic" else None
+        return get("windows", "oltp", engine, series="firedac", driver=driver, script=test, clients=key,
+                   cursor="" if driver == "dotnet" else cursor)
+    panels = []
+    for panel, driver, cursor in (("fd_dotnet", "dotnet", "automatic"), ("fd_default", "firedac", "automatic"),
+                                  ("fd_plain", "firedac", "default")):
+        panels.append((panel, [(label, value("fb", driver, test, c, cursor), value("pg", driver, test, c, cursor))
+                               for (test, c), label in t["fd_groups"].items()]))
+    return pairs(lang, t["fd_title"], t["fd_sub"], panels, 1, [t["fd_note"], t["raw"]], label_col=250)
+
+
 def main():
     out_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE
     get = load(HERE.parent / "results" / "medians.json")
     for lang in TEXT:
         for name, draw in (("read", read_chart), ("insert", insert_chart), ("bulk", bulk_chart),
-                           ("oltp", oltp_chart), ("json", json_chart)):
+                           ("oltp", oltp_chart), ("json", json_chart), ("firedac", firedac_chart)):
             (out_dir / f"{name}-{lang}.svg").write_text(draw(get, lang), encoding="utf-8")
-    print(f"wrote 10 charts to {out_dir}")
+    print(f"wrote 12 charts to {out_dir}")
 
 
 if __name__ == "__main__":

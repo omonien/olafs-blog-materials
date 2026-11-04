@@ -35,7 +35,7 @@ The Mac was busy throughout: other work compiled and tested on it at the same ti
 
 ## Results
 
-Medians of all runs, 4 November 2026; PostgreSQL was ahead in every test on both platforms. Factor = how many times better PostgreSQL is. Per-run values, ranges, latencies and CPU times: [results/summary.md](results/summary.md); raw logs: [results/raw/](results/raw/).
+Medians of all runs, 4 November 2026; with the .NET client PostgreSQL was ahead in every test on both platforms (for FireDAC see the section "FireDAC (Windows)" below). Factor = how many times better PostgreSQL is. Per-run values, ranges, latencies and CPU times: [results/summary.md](results/summary.md); raw logs: [results/raw/](results/raw/).
 
 ### macOS, Docker
 
@@ -112,6 +112,44 @@ Rounds: three on the Mac (every step for both servers back to back, order flippe
 
 **CPU times** are in the raw data, but on this machine they are only a rough guide: the Docker VM and the Windows VM run on an overloaded host, and time a vCPU waits for the host can show up as CPU time of whatever process ran on it.
 
+## FireDAC (Windows)
+
+For Delphi readers, [`delphi/DbCompareBench.FireDAC.dpr`](delphi/DbCompareBench.FireDAC.dpr) (Delphi 13 Florence, Win64) runs the tests that matter most to an interactive Delphi application against the same two Windows servers: `insert` (one row per transaction, durable, 1 and 8 clients) and the pgbench scripts select-only and TPC-B like (1 and 16 clients). Same tables, SQL, transaction modes and `RESULT` lines as the .NET program, every client a thread with its own `TFDConnection`. Client libraries: `fbclient.dll` of the Firebird 5.0.4 installation (in a copy whose `firebird.conf` says `WireCrypt = Disabled`) and `libpq.dll` of PostgreSQL 18.1; `probe` confirms that neither connection is encrypted.
+
+The FireDAC series ran after the main Windows rounds, in `compare.ps1 pair` with both servers up. Within a run the .NET step and the FireDAC steps of a test follow each other directly, for Firebird and PostgreSQL, so all columns of one row of the table below saw the same load. These .NET runs are a series of their own (`results/raw/windows-firedac-2026-11-04.log`) and are not mixed into the main Windows medians.
+
+**Two FireDAC defaults were changed, because they would have made the comparison meaningless.** Both were found with FireDAC's own monitor (`trace=<file>`) and checked in the FireDAC sources that come with Delphi 13; the details, with the numbers of the trial runs, are in [results/raw/diagnostics/](results/raw/diagnostics/windows-firedac-diagnostics-2026-11-04.txt).
+
+1. **NOWAIT.** FireDAC starts Firebird transactions with `nowait` unless `UpdateOptions.LockWait` is `True` or `TxOptions.Params` names `wait` (`FireDAC.Phys.IBBase`, lines 2036 to 2040). A transaction that wants a row another transaction holds then fails at once instead of waiting; FirebirdClient and PostgreSQL wait. The program sets `UpdateOptions.LockWait := True`; `probe` shows `MON$LOCK_TIMEOUT = -1`.
+2. **A `Prepare` outside a transaction leaves a Firebird transaction open.** Firebird prepares a statement within a transaction. Outside an explicit one FireDAC starts it itself before the prepare (`cpBeforeCmdPrepare`, `FireDAC.Phys.IBBase` lines 2108 to 2113) and does not end it. Every later `StartTransaction` is then only a savepoint inside that transaction (`SAVEPOINT SP_n`), and `Commit` releases the savepoint (`RELEASE SAVEPOINT SP_n`). In the trial run nothing was committed before the end of the run, each client held its locks until then, and TPC-B like with 4 clients managed 15 transactions in about 63 s. `probe` reproduces the cause: after an explicit `Prepare` outside a transaction, `InTransaction` is `True` with Firebird and `False` with PostgreSQL. The program prepares inside an explicit transaction and commits it before the run.
+
+**Two FireDAC defaults stay in the measurement,** because every application gets them:
+
+- **Firebird: a commit takes the commands offline.** A commit without retaining calls `DisconnectCommands(nil, dmOffline)` before it commits (`TFDPhysIBTransactionBase.InternalCommit`, lines 2062 to 2070), so every transaction prepares its statements again; the trace shows `isc_dsql_prepare` in every transaction.
+- **PostgreSQL: a SELECT runs through a server cursor.** With the default `FetchOptions` FireDAC prepares `DECLARE ... NO SCROLL CURSOR FOR ...` and `FETCH FORWARD 50`. A `SELECT` that returns one row then costs six round trips outside a transaction (`BEGIN`, `DECLARE`, `FETCH`, `FETCH`, `CLOSE`, `COMMIT`) and four inside one; Npgsql needs one. `cursor=default` sets `FetchOptions.CursorKind := ckDefault` on the `SELECT`: FireDAC then sends only the prepared query (one `PQexecPrepared` per open, seen in the trace). This variant was measured as well, for both servers.
+
+### FireDAC results
+
+Three rounds on 4 November 2026 between 14:02 and 15:11 (VM time), the order of the servers and of .NET and FireDAC flipped with each round. Medians, factor = how many times better PostgreSQL is with the same client stack (below 1: Firebird is better), n = runs per cell (Firebird .NET / FireDAC / ckDefault, PostgreSQL the same). Per-run values and ranges: section "windows, firedac" of [results/summary.md](results/summary.md).
+
+![The same comparison with FireDAC](charts/firedac-en.svg)
+
+| Test | Unit | Firebird .NET | Firebird FireDAC | Firebird ckDefault | PostgreSQL .NET | PostgreSQL FireDAC | PostgreSQL ckDefault | Factor .NET | Factor FireDAC | Factor ckDefault | n |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Insert, durable, 1 client | txn/s | 53 | 75 |  | 188 | 294 |  | 3.6 | 3.9 |  | 3/3/-/3/3/- |
+| Insert, durable, 8 clients | txn/s | 358 | 276 |  | 891 | 605 |  | 2.5 | 2.2 |  | 3/3/-/3/3/- |
+| pgbench select-only, 1 client | txn/s | 279 | 245 | 314 | 848 | 117 | 683 | 3.0 | 0.5 | 2.2 | 3/3/3/3/3/3 |
+| pgbench select-only, 16 clients | txn/s | 1,367 | 2,061 | 1,704 | 4,895 | 619 | 2,691 | 3.6 | 0.3 | 1.6 | 3/3/3/3/3/3 |
+| pgbench TPC-B like, 1 client | txn/s | 12 | 14 | 15 | 62 | 47 | 42 | 5.1 | 3.3 | 2.7 | 3/3/3/3/3/3 |
+| pgbench TPC-B like, 16 clients | txn/s | 70 | 50 | 85 | 324 | 312 | 195 | 4.6 | 6.3 | 2.3 | 3/3/3/3/3/3 |
+
+The Mac was very busy during the series (load average between 11 and 681, `results/raw/mac-loadavg-firedac-2026-11-04.txt`), so single values of one cell differ by up to a factor of ten between rounds. What the series shows is therefore read from the pairs that ran back to back in the same run:
+
+- **Writes: PostgreSQL stays ahead with FireDAC.** TPC-B like: PostgreSQL was faster in every pair, with both client stacks (FireDAC 2.2 to 6.8 times). Inserts: PostgreSQL was faster in 11 of 12 pairs; the exception is round 2 with 8 FireDAC clients, where PostgreSQL reached 141 transactions per second, less than a quarter of its two other runs.
+- **Reading single rows: with FireDAC's defaults Firebird is ahead.** With one client Firebird was faster in all three rounds (1.8 to 2.8 times), with 16 clients in two rounds, the third was even. PostgreSQL loses more in the six round trips per `SELECT` than it gains in the server.
+- **One option turns that around.** With `CursorKind := ckDefault` PostgreSQL was faster with one client in all three rounds (1.3 to 2.2 times); with 16 clients round 1 went to Firebird (1.4 times) and round 2 to PostgreSQL (1.6 times). Against FireDAC's default cursor, `ckDefault` made the PostgreSQL lookups 3.5 to 8 times faster with one client. For Firebird it changes nothing systematic; the differences in the table are within the spread.
+- **Not paired:** the two steps that failed (see "Changes during the measurement") were repeated for PostgreSQL alone, about ten minutes after their Firebird counterpart, at a lower load; each is one of the three PostgreSQL values of its cell (TPC-B like with 16 clients and FireDAC defaults, select-only with 16 clients and `ckDefault`).
+
 ## Changes during the measurement
 
 Everything that went wrong is in the logs, nothing was dropped silently:
@@ -120,6 +158,7 @@ Everything that went wrong is in the logs, nothing was dropped silently:
 - Mac rounds, first start: loading 500,000 rows row by row took Firebird about 15 minutes; the prepared bulk test was reduced to 100,000 rows and the rounds restarted. Second start: the CPU time of the PostgreSQL backends was read only after the connections had closed (a backend ends with its connection); fixed in commit `ee93396`, rounds restarted. Both stopped starts are kept in `results/raw/aborted/` and are not part of the medians.
 - Windows setup: the first attempt hung while starting PostgreSQL (the server inherited the output pipe of `pg_ctl`); fixed in the script.
 - Windows rounds: the Forge (the build service on the VM) stops a run after 600 s, so the tests run in several smaller runs per server. The first Firebird run reached the limit during the prepared bulk load; that test was repeated in its own run. The read with Firebird wire encryption ran in the first Windows round only.
+- FireDAC series: the first builds of the FireDAC program ran Firebird with NOWAIT and with statements prepared outside a transaction; both found in trial runs before the series (see "FireDAC (Windows)" and `results/raw/diagnostics/`). During the series two PostgreSQL steps with 16 FireDAC clients failed: round 1, TPC-B like, ended without output; round 3, select-only with `ckDefault`, hung until the time limit. The program had not activated `FDManager` before its threads opened their connections, which [Multithreading (FireDAC)](https://docwiki.embarcadero.com/RADStudio/en/Multithreading_(FireDAC)) asks for. Fixed (`FDManager.Active := True` before the clients start, `FDManager.Close` at the end), both steps repeated with the fixed build; all other FireDAC values come from the build before the fix, whose measured loop is the same.
 
 ## Reproduce
 
@@ -143,18 +182,27 @@ mac/run.sh stop
 
 The step names and options are those of `dotnet/Program.cs` (see its header); `mac/run.sh` shows the full list of one round.
 
-**Evaluate:** `python3 tools/summarize.py` writes `results/summary.md` and `results/medians.json`, `python3 charts/make_charts.py` redraws the charts from them.
+**FireDAC** (Delphi 13 Florence, Win64; build `delphi/DbCompareBench.FireDAC.dproj` in the IDE or with MSBuild). Steps that start with `fd:` run the FireDAC program, `pair` runs every step for both servers back to back; the pgbench tables come from `oltp-setup` of the .NET program:
+
+```powershell
+.\windows\compare.ps1 pair -Order fb,pg -FireDacExe <path>\DbCompareBench.FireDAC.exe -Steps 'fd:probe;insert clients=1;fd:insert clients=1;oltp script=select scale=10 clients=1 seconds=20 warmup=5;fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5;fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5 cursor=default'
+```
+
+`trace=<file>` writes FireDAC's monitor log for a short diagnostic run; such a run does not end by itself after its `RESULT` line (not investigated).
+
+**Evaluate:** `python3 tools/summarize.py` writes `results/summary.md`, `results/comparison.md` and `results/medians.json`, `python3 charts/make_charts.py` redraws the charts from them.
 
 Local throwaway passwords only (`bench`).
 
 ## Files
 
 - `dotnet/`: the benchmark program (`DbCompareBench.csproj`, `Program.cs`).
+- `delphi/`: the FireDAC counterpart for the Windows series (`DbCompareBench.FireDAC.dpr`, `.dproj`).
 - `firebird/fill-bench-rows.sql`, `postgresql/fill-bench-rows.sql`: the 2,000,000 rows of the read test, unchanged from the first post.
 - `mac/run.sh`, `windows/compare.ps1`: setup and measurement rounds.
 - `tools/summarize.py`: medians from the raw logs into `results/summary.md` and `results/medians.json`.
 - `charts/make_charts.py`: the charts of the post, German and English, light and dark.
-- `results/raw/`: every program output with the load before each measurement; `results/raw/aborted/` keeps the rounds that were stopped and restarted (they are not part of the medians, see the README section "Changes during the measurement").
+- `results/raw/`: every program output with the load before each measurement; `results/raw/aborted/` keeps the rounds that were stopped and restarted (they are not part of the medians, see the README section "Changes during the measurement"); `results/raw/diagnostics/` the trial and trace runs of the FireDAC program, with what the traces showed.
 - `facts.md`: the feature comparison with sources.
 
 ## Trademarks

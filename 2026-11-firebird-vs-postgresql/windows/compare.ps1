@@ -10,13 +10,15 @@
 # fsync: measures with pg_test_fsync how expensive a flush is on the disk of the work folder.
 # Examples: .\compare.ps1 setup
 #           .\compare.ps1 run -Engine fb -Steps 'probe;read;insert clients=1'
-# Steps are separated by semicolons, so that the list survives powershell -File as one argument.
+# Steps are separated by semicolons, so that the list survives powershell -File as one argument. A step that starts
+# with "fd:" runs the FireDAC program (-FireDacExe) instead of the .NET one, e.g. 'oltp-setup scale=10;fd:oltp script=select'.
 [CmdletBinding(PositionalBinding = $false)]
 param(
   [Parameter(Mandatory, Position = 0)][ValidateSet('setup', 'build', 'run', 'pair', 'fsync')][string]$Phase,
   [ValidateSet('fb', 'pg')][string]$Engine,
   [string]$Steps = '',
   [string]$Order = 'fb,pg',
+  [string]$FireDacExe,
   [string]$FirebirdDir = 'C:\Program Files\Firebird\Firebird_5_0',
   [string]$WorkDir = (Join-Path $env:LOCALAPPDATA 'dbbench-local')
 )
@@ -80,7 +82,12 @@ function Write-FirebirdConf {
   ) | Set-Content -Path (Join-Path $fbRoot 'firebird.conf') -Encoding ascii
 }
 
+# A server or benchmark program left over from a run that was killed (time limit) is ended first; the installed
+# Firebird service runs from another folder and stays untouched.
 function Start-Firebird {
+  $fbExe = Join-Path $fbRoot 'firebird.exe'
+  Get-Process firebird, DbCompareBench.FireDAC -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -ne 'firebird' -or $_.Path -eq $fbExe } | Stop-Process -Force
   $env:FIREBIRD = $fbRoot
   try { $server = Start-Process -FilePath (Join-Path $fbRoot 'firebird.exe') -ArgumentList '-a' -WindowStyle Hidden -PassThru }
   finally { Remove-Item Env:FIREBIRD }
@@ -99,12 +106,33 @@ function Start-Postgres {
 
 function Stop-Postgres { & (Join-Path $pgBin 'pg_ctl.exe') -D $pgData -m fast -w stop | Out-Null }
 
+# FireDAC loads fbclient.dll, which reads the firebird.conf next to it. This copy of the client says
+# WireCrypt = Disabled, so FireDAC talks to Firebird unencrypted, like FirebirdClient with WireCrypt=Disabled.
+function Get-FirebirdClientLibrary {
+  $clientRoot = Join-Path $WorkDir 'fbclient-nocrypt'
+  if (-not (Test-Path (Join-Path $clientRoot 'fbclient.dll'))) {
+    robocopy $fbRoot $clientRoot /E /XF *.fdb firebird.log /NFL /NDL /NJH /NJS /NP | Out-Null
+    if ($LASTEXITCODE -ge 8) { throw "robocopy failed with exit code $LASTEXITCODE" }
+  }
+  'WireCrypt = Disabled' | Set-Content -Path (Join-Path $clientRoot 'firebird.conf') -Encoding ascii
+  Join-Path $clientRoot 'fbclient.dll'
+}
+
 function Invoke-Bench([string]$Engine, [string]$Step) {
-  $parts = $Step -split ' '
   Write-Load
   "=== $Engine $Step"
-  & dotnet $dotnetDll $parts[0] @($connection[$Engine]) @($parts | Select-Object -Skip 1)
-  if ($LASTEXITCODE -ne 0) { "FAILED $Engine $Step" }
+  if ($Step.StartsWith('fd:')) {
+    if (-not $FireDacExe) { throw 'fd: steps need -FireDacExe' }
+    $parts = $Step.Substring(3) -split ' '
+    $vendorLib = if ($Engine -eq 'fb') { Get-FirebirdClientLibrary } else { Join-Path $pgBin 'libpq.dll' }
+    $arguments = @($parts[0]) + ($connection[$Engine] | Select-Object -First 6) + @($parts | Select-Object -Skip 1) + "vendorlib=$vendorLib"
+    & $FireDacExe @arguments 2>&1
+  }
+  else {
+    $parts = $Step -split ' '
+    & dotnet $dotnetDll $parts[0] @($connection[$Engine]) @($parts | Select-Object -Skip 1)
+  }
+  if ($LASTEXITCODE -ne 0) { "FAILED $Engine $Step (exit code $LASTEXITCODE)" }
 }
 
 function Invoke-IsqlScript([string]$Sql, [string[]]$Arguments = @()) {

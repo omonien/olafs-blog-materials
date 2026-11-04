@@ -1,0 +1,369 @@
+FIREDAC SERIES Windows 11 VM (Forge), 4 November 2026, after the main Windows rounds. windows/compare.ps1 pair: both servers running, every step for Firebird and PostgreSQL back to back in the order of the round; .NET steps and FireDAC steps ("fd:") alternate within the same runs, so all four columns of a test see the same load. Times in LOAD lines are VM time (UTC+1).
+source: dotnet/Program.cs SHA-256 1B90595336C9C5FA2A58C0270A8A42E4A1E8BD2D6A185B1D539F5FE86DD1401C (unchanged, same build as the main rounds)
+source: delphi/DbCompareBench.FireDAC.dpr SHA-256 203A5E2D767B29F16455E31A18ACCB532A98341EA4161B693775952EC23043F7
+BUILD FireDAC: Delphi 13 Florence, Win64 Release, msbuild with delphi/DbCompareBench.FireDAC.dproj, 0 warnings, 0 errors, DbCompareBench.FireDAC.exe SHA-256 136378CBD6FFE441B4F9278A06F58D720806A4A722CE7C4A74E813CCD580AC44
+Earlier trial and trace runs of the FireDAC program are in diagnostics/windows-firedac-diagnostics-2026-11-04.txt; they are not part of the medians.
+ROUND 1 order fb pg, the .NET step of a test before its FireDAC steps
+RUN pair toolRun 4f3d34cb started 2026-11-04T14:02:19
+machine: 4 logical CPUs, order fb,pg
+pg_ctl: another server might be running; trying to start anyway (stale postmaster.pid of a diagnostic run stopped by the time limit; German output translated)
+waiting for server to start............. done
+server started
+LOAD time=2026-11-04T14:02:39 vm_cpu_percent=39
+=== fb fd:probe
+client: 500049900, server: 500049900
+wire_encrypted=FALSE
+write_tx_isolation_mode(4=read consistency)=4
+write_tx_lock_timeout(-1=wait)=-1
+in_transaction_after_prepare=True
+LOAD time=2026-11-04T14:02:42 vm_cpu_percent=49
+=== pg fd:probe
+client: 1801000000, server: 1800010000
+in_transaction_after_prepare=False
+connection_ssl=false
+synchronous_commit=on
+LOAD time=2026-11-04T14:02:44 vm_cpu_percent=21
+=== fb insert clients=1
+RESULT test=insert engine=fb durability=default forced_writes=1 clients=1 seconds=30 txns=1579 tps=52.6 lat_avg_ms=18.976 p50_ms=16.377 p95_ms=34.336 p99_ms=66.250 max_ms=128.886 retries=0 failed=0 total_txns=1845 run_s=35 client_cpu_s=7.70 server_cpu_s=8.81
+LOAD time=2026-11-04T14:03:24 vm_cpu_percent=7
+=== pg insert clients=1
+RESULT test=insert engine=pg durability=default synchronous_commit=on,fsync=on clients=1 seconds=30 txns=4996 tps=166.5 lat_avg_ms=5.999 p50_ms=4.584 p95_ms=12.538 p99_ms=26.497 max_ms=195.325 retries=0 failed=0 total_txns=5665 run_s=35 client_cpu_s=12.47 server_cpu_s=15.95
+LOAD time=2026-11-04T14:04:04 vm_cpu_percent=60
+=== fb fd:insert clients=1
+RESULT test=insert engine=fb driver=firedac durability=default clients=1 seconds=30 txns=874 tps=29.1 lat_avg_ms=34.317 p50_ms=22.586 p95_ms=93.835 p99_ms=162.929 max_ms=274.331 retries=0 failed=0 total_txns=1056 run_s=35
+LOAD time=2026-11-04T14:04:43 vm_cpu_percent=5
+=== pg fd:insert clients=1
+RESULT test=insert engine=pg driver=firedac durability=default clients=1 seconds=30 txns=3091 tps=103.0 lat_avg_ms=9.699 p50_ms=5.915 p95_ms=29.880 p99_ms=64.898 max_ms=202.206 retries=0 failed=0 total_txns=3477 run_s=35
+LOAD time=2026-11-04T14:05:24 vm_cpu_percent=46
+=== fb insert clients=8
+RESULT test=insert engine=fb durability=default forced_writes=1 clients=8 seconds=30 txns=5032 tps=167.7 lat_avg_ms=47.413 p50_ms=30.247 p95_ms=142.627 p99_ms=316.384 max_ms=909.495 retries=0 failed=0 total_txns=5617 run_s=35 client_cpu_s=17.53 server_cpu_s=31.81
+LOAD time=2026-11-04T14:06:08 vm_cpu_percent=10
+=== pg insert clients=8
+RESULT test=insert engine=pg durability=default synchronous_commit=on,fsync=on clients=8 seconds=30 txns=21648 tps=721.6 lat_avg_ms=11.052 p50_ms=7.182 p95_ms=30.117 p99_ms=68.263 max_ms=367.826 retries=0 failed=0 total_txns=25782 run_s=35 client_cpu_s=36.53 server_cpu_s=53.70
+LOAD time=2026-11-04T14:06:49 vm_cpu_percent=62
+=== fb fd:insert clients=8
+RESULT test=insert engine=fb driver=firedac durability=default clients=8 seconds=30 txns=3563 tps=118.8 lat_avg_ms=67.104 p50_ms=33.800 p95_ms=205.682 p99_ms=694.378 max_ms=1624.679 retries=0 failed=0 total_txns=4355 run_s=35
+LOAD time=2026-11-04T14:07:29 vm_cpu_percent=30
+=== pg fd:insert clients=8
+RESULT test=insert engine=pg driver=firedac durability=default clients=8 seconds=30 txns=18144 tps=604.8 lat_avg_ms=13.199 p50_ms=8.217 p95_ms=38.257 p99_ms=80.102 max_ms=441.019 retries=0 failed=0 total_txns=21713 run_s=35
+RUN pair toolRun 570d11ed started 2026-11-04T14:08:17
+machine: 4 logical CPUs, order fb,pg
+waiting for server to start..... done
+server started
+LOAD time=2026-11-04T14:08:29 vm_cpu_percent=31
+=== fb oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=select scale=10 forced_writes=1 clients=1 seconds=20 txns=3542 tps=177.1 lat_avg_ms=5.641 p50_ms=4.581 p95_ms=11.314 p99_ms=23.979 max_ms=98.217 retries=0 failed=0 total_txns=4223 run_s=25 client_cpu_s=10.39 server_cpu_s=12.69
+LOAD time=2026-11-04T14:09:00 vm_cpu_percent=31
+=== pg oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=select scale=10 synchronous_commit=on,fsync=on clients=1 seconds=20 txns=6139 tps=306.9 lat_avg_ms=3.251 p50_ms=1.275 p95_ms=8.067 p99_ms=61.800 max_ms=186.501 retries=0 failed=0 total_txns=8361 run_s=25 client_cpu_s=12.23 server_cpu_s=13.20
+LOAD time=2026-11-04T14:09:31 vm_cpu_percent=37
+=== fb fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=automatic clients=1 seconds=20 txns=4907 tps=245.4 lat_avg_ms=4.068 p50_ms=3.065 p95_ms=8.509 p99_ms=21.166 max_ms=96.108 retries=0 failed=0 total_txns=5474 run_s=25
+LOAD time=2026-11-04T14:09:59 vm_cpu_percent=16
+=== pg fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=automatic clients=1 seconds=20 txns=2345 tps=117.3 lat_avg_ms=8.519 p50_ms=7.316 p95_ms=14.268 p99_ms=32.271 max_ms=101.575 retries=0 failed=0 total_txns=2899 run_s=25
+LOAD time=2026-11-04T14:10:27 vm_cpu_percent=10
+=== fb fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=default clients=1 seconds=20 txns=5619 tps=281.0 lat_avg_ms=3.557 p50_ms=2.582 p95_ms=6.228 p99_ms=22.573 max_ms=185.703 retries=0 failed=0 total_txns=7300 run_s=25
+LOAD time=2026-11-04T14:10:55 vm_cpu_percent=32
+=== pg fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=default clients=1 seconds=20 txns=8925 tps=446.3 lat_avg_ms=2.239 p50_ms=1.792 p95_ms=4.053 p99_ms=8.927 max_ms=117.603 retries=0 failed=0 total_txns=10358 run_s=25
+LOAD time=2026-11-04T14:11:25 vm_cpu_percent=75
+=== fb oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=select scale=10 forced_writes=1 clients=16 seconds=20 txns=7807 tps=390.4 lat_avg_ms=40.757 p50_ms=23.224 p95_ms=145.911 p99_ms=271.286 max_ms=567.382 retries=0 failed=0 total_txns=8848 run_s=25 client_cpu_s=26.70 server_cpu_s=34.42
+LOAD time=2026-11-04T14:11:59 vm_cpu_percent=16
+=== pg oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=select scale=10 synchronous_commit=on,fsync=on clients=16 seconds=20 txns=9742 tps=487.1 lat_avg_ms=30.647 p50_ms=1.161 p95_ms=86.763 p99_ms=1265.541 max_ms=2225.849 retries=0 failed=0 total_txns=13842 run_s=25 client_cpu_s=27.41 server_cpu_s=36.73
+LOAD time=2026-11-04T14:12:38 vm_cpu_percent=99
+=== fb fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=automatic clients=16 seconds=20 txns=5091 tps=254.6 lat_avg_ms=62.079 p50_ms=27.475 p95_ms=248.451 p99_ms=454.670 max_ms=789.260 retries=0 failed=0 total_txns=5524 run_s=25
+LOAD time=2026-11-04T14:13:27 vm_cpu_percent=39
+=== pg fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=automatic clients=16 seconds=20 txns=5379 tps=269.0 lat_avg_ms=57.558 p50_ms=10.995 p95_ms=342.853 p99_ms=778.564 max_ms=1791.617 retries=0 failed=0 total_txns=6735 run_s=25
+LOAD time=2026-11-04T14:14:05 vm_cpu_percent=93
+=== fb fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=default clients=16 seconds=20 txns=11125 tps=556.3 lat_avg_ms=28.618 p50_ms=9.275 p95_ms=117.853 p99_ms=244.721 max_ms=784.518 retries=0 failed=0 total_txns=15322 run_s=25
+LOAD time=2026-11-04T14:14:35 vm_cpu_percent=40
+=== pg fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=default clients=16 seconds=20 txns=8236 tps=411.8 lat_avg_ms=38.586 p50_ms=3.429 p95_ms=203.097 p99_ms=389.943 max_ms=890.521 retries=0 failed=0 total_txns=10422 run_s=25
+RUN pair toolRun 1d8b7f3d started 2026-11-04T14:15:42 (Mac load average 530 to 590 during this run, mostly another VM and test runs of other work; VM CPU often 100 %)
+machine: 4 logical CPUs, order fb,pg
+waiting for server to start....... done
+server started
+LOAD time=2026-11-04T14:16:39 vm_cpu_percent=83
+=== fb oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=tpcb scale=10 forced_writes=1 clients=1 seconds=20 txns=243 tps=12.2 lat_avg_ms=81.956 p50_ms=62.254 p95_ms=203.600 p99_ms=275.201 max_ms=407.762 retries=0 failed=0 total_txns=271 run_s=25 client_cpu_s=11.08 server_cpu_s=7.03
+LOAD time=2026-11-04T14:17:13 vm_cpu_percent=16
+=== pg oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=tpcb scale=10 synchronous_commit=on,fsync=on clients=1 seconds=20 txns=332 tps=16.6 lat_avg_ms=59.835 p50_ms=30.207 p95_ms=192.807 p99_ms=318.133 max_ms=436.898 retries=0 failed=0 total_txns=411 run_s=25 client_cpu_s=25.31 server_cpu_s=8.70
+LOAD time=2026-11-04T14:17:51 vm_cpu_percent=93
+=== fb fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=automatic clients=1 seconds=20 txns=43 tps=2.2 lat_avg_ms=448.103 p50_ms=449.248 p95_ms=833.726 p99_ms=1103.628 max_ms=1103.628 retries=0 failed=0 total_txns=50 run_s=25
+LOAD time=2026-11-04T14:18:27 vm_cpu_percent=65
+=== pg fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=automatic clients=1 seconds=20 txns=218 tps=10.9 lat_avg_ms=91.045 p50_ms=70.203 p95_ms=250.838 p99_ms=380.756 max_ms=478.180 retries=0 failed=0 total_txns=257 run_s=25
+LOAD time=2026-11-04T14:19:02 vm_cpu_percent=100
+=== fb fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=default clients=1 seconds=20 txns=48 tps=2.4 lat_avg_ms=410.999 p50_ms=374.337 p95_ms=666.499 p99_ms=976.333 max_ms=976.333 retries=0 failed=0 total_txns=71 run_s=25
+LOAD time=2026-11-04T14:19:39 vm_cpu_percent=100
+=== pg fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=default clients=1 seconds=20 txns=251 tps=12.6 lat_avg_ms=78.827 p50_ms=65.128 p95_ms=188.173 p99_ms=247.485 max_ms=440.618 retries=0 failed=0 total_txns=315 run_s=25
+LOAD time=2026-11-04T14:20:14 vm_cpu_percent=100
+=== fb oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=tpcb scale=10 forced_writes=1 clients=16 seconds=20 txns=1393 tps=69.7 lat_avg_ms=220.500 p50_ms=106.000 p95_ms=566.045 p99_ms=2619.540 max_ms=6791.057 retries=0 failed=0 total_txns=1522 run_s=25 client_cpu_s=17.80 server_cpu_s=25.55
+LOAD time=2026-11-04T14:21:06 vm_cpu_percent=100
+=== pg oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=tpcb scale=10 synchronous_commit=on,fsync=on clients=16 seconds=20 txns=6474 tps=323.7 lat_avg_ms=48.984 p50_ms=16.640 p95_ms=218.557 p99_ms=467.252 max_ms=1207.014 retries=0 failed=0 total_txns=8488 run_s=25 client_cpu_s=26.88 server_cpu_s=46.12
+LOAD time=2026-11-04T14:21:36 vm_cpu_percent=100
+=== fb fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=automatic clients=16 seconds=20 txns=1087 tps=54.4 lat_avg_ms=278.257 p50_ms=174.412 p95_ms=838.171 p99_ms=1657.842 max_ms=2710.629 retries=0 failed=0 total_txns=1492 run_s=25
+LOAD time=2026-11-04T14:22:09 vm_cpu_percent=100
+=== pg fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+FAILED pg fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+NOTE the program ended with a non-zero exit code and printed nothing; compare.ps1 shows the exit code and stderr since. The step is repeated below.
+LOAD time=2026-11-04T14:23:28 vm_cpu_percent=100
+=== fb fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=default clients=16 seconds=20 txns=252 tps=12.6 lat_avg_ms=1184.634 p50_ms=989.697 p95_ms=2426.090 p99_ms=3544.328 max_ms=5412.938 retries=0 failed=0 total_txns=378 run_s=25
+LOAD time=2026-11-04T14:24:20 vm_cpu_percent=100
+=== pg fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=default clients=16 seconds=20 txns=1541 tps=77.1 lat_avg_ms=203.194 p50_ms=105.937 p95_ms=678.852 p99_ms=1201.550 max_ms=2801.646 retries=0 failed=0 total_txns=1783 run_s=25
+ROUND 2 order pg fb, the FireDAC steps of a test before its .NET step; compare.ps1 now prints the exit code and stderr of a failed FireDAC step (windows/compare.ps1 SHA-256 58BB65810C3F15A99C5664EDBFC23067F2206286B391C4BFDD9ED0A52A81222D)
+RUN pair toolRun 8ce98b96 started 2026-11-04T14:28:21 (Mac load average fell from about 300 to 130 during this run)
+machine: 4 logical CPUs, order pg,fb
+waiting for server to start..... done
+server started
+LOAD time=2026-11-04T14:28:29 vm_cpu_percent=30
+=== pg fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=automatic clients=16 seconds=20 txns=6230 tps=311.5 lat_avg_ms=50.714 p50_ms=17.512 p95_ms=223.171 p99_ms=568.152 max_ms=1171.892 retries=0 failed=0 total_txns=7609 run_s=25
+LOAD time=2026-11-04T14:28:58 vm_cpu_percent=61
+=== fb fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=automatic clients=16 seconds=20 txns=990 tps=49.5 lat_avg_ms=318.994 p50_ms=250.687 p95_ms=786.962 p99_ms=1259.266 max_ms=1957.507 retries=0 failed=0 total_txns=1606 run_s=25
+LOAD time=2026-11-04T14:29:28 vm_cpu_percent=43
+=== pg fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=default clients=16 seconds=20 txns=3893 tps=194.7 lat_avg_ms=80.864 p50_ms=31.251 p95_ms=334.124 p99_ms=574.068 max_ms=941.014 retries=0 failed=0 total_txns=4405 run_s=25
+LOAD time=2026-11-04T14:29:57 vm_cpu_percent=68
+=== fb fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=default clients=16 seconds=20 txns=1706 tps=85.3 lat_avg_ms=183.096 p50_ms=113.947 p95_ms=530.035 p99_ms=1356.147 max_ms=2266.315 retries=0 failed=0 total_txns=2229 run_s=25
+LOAD time=2026-11-04T14:30:37 vm_cpu_percent=100
+=== pg oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=tpcb scale=10 synchronous_commit=on,fsync=on clients=16 seconds=20 txns=7536 tps=376.8 lat_avg_ms=42.122 p50_ms=14.670 p95_ms=187.782 p99_ms=396.322 max_ms=1673.126 retries=0 failed=0 total_txns=9641 run_s=25 client_cpu_s=27.22 server_cpu_s=45.19
+LOAD time=2026-11-04T14:31:12 vm_cpu_percent=100
+=== fb oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=tpcb scale=10 forced_writes=1 clients=16 seconds=20 txns=2175 tps=108.8 lat_avg_ms=145.734 p50_ms=84.470 p95_ms=478.274 p99_ms=945.582 max_ms=1876.705 retries=0 failed=0 total_txns=2790 run_s=25 client_cpu_s=14.12 server_cpu_s=30.98
+LOAD time=2026-11-04T14:31:43 vm_cpu_percent=100
+=== pg fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=automatic clients=1 seconds=20 txns=1005 tps=50.3 lat_avg_ms=19.894 p50_ms=15.308 p95_ms=48.731 p99_ms=99.490 max_ms=164.570 retries=0 failed=0 total_txns=1179 run_s=25
+LOAD time=2026-11-04T14:32:12 vm_cpu_percent=40
+=== fb fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=automatic clients=1 seconds=20 txns=456 tps=22.8 lat_avg_ms=43.716 p50_ms=41.440 p95_ms=63.733 p99_ms=83.793 max_ms=156.420 retries=0 failed=0 total_txns=558 run_s=25
+LOAD time=2026-11-04T14:32:39 vm_cpu_percent=8
+=== pg fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=default clients=1 seconds=20 txns=840 tps=42.0 lat_avg_ms=23.735 p50_ms=12.668 p95_ms=88.842 p99_ms=136.456 max_ms=199.754 retries=0 failed=0 total_txns=1267 run_s=25
+LOAD time=2026-11-04T14:33:06 vm_cpu_percent=10
+=== fb fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=default clients=1 seconds=20 txns=308 tps=15.4 lat_avg_ms=64.802 p50_ms=44.671 p95_ms=180.013 p99_ms=263.256 max_ms=305.303 retries=0 failed=0 total_txns=401 run_s=25
+LOAD time=2026-11-04T14:33:36 vm_cpu_percent=55
+=== pg oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=tpcb scale=10 synchronous_commit=on,fsync=on clients=1 seconds=20 txns=1246 tps=62.3 lat_avg_ms=16.023 p50_ms=8.242 p95_ms=55.753 p99_ms=106.304 max_ms=195.861 retries=0 failed=0 total_txns=1411 run_s=25 client_cpu_s=14.22 server_cpu_s=8.59
+LOAD time=2026-11-04T14:34:11 vm_cpu_percent=38
+=== fb oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=tpcb scale=10 forced_writes=1 clients=1 seconds=20 txns=83 tps=4.2 lat_avg_ms=239.115 p50_ms=210.547 p95_ms=497.652 p99_ms=852.964 max_ms=852.964 retries=0 failed=0 total_txns=129 run_s=25 client_cpu_s=15.89 server_cpu_s=4.08
+RUN pair toolRun 5ea2a8ef started 2026-11-04T14:35:21
+machine: 4 logical CPUs, order pg,fb
+waiting for server to start...... done
+server started
+LOAD time=2026-11-04T14:35:52 vm_cpu_percent=59
+=== pg fd:insert clients=8
+RESULT test=insert engine=pg driver=firedac durability=default clients=8 seconds=30 txns=4223 tps=140.8 lat_avg_ms=56.616 p50_ms=32.166 p95_ms=192.143 p99_ms=323.945 max_ms=628.097 retries=0 failed=0 total_txns=4807 run_s=35
+LOAD time=2026-11-04T14:36:36 vm_cpu_percent=99
+=== fb fd:insert clients=8
+RESULT test=insert engine=fb driver=firedac durability=default clients=8 seconds=30 txns=8268 tps=275.6 lat_avg_ms=28.992 p50_ms=23.089 p95_ms=60.291 p99_ms=123.584 max_ms=397.413 retries=0 failed=0 total_txns=9206 run_s=35
+LOAD time=2026-11-04T14:37:16 vm_cpu_percent=14
+=== pg insert clients=8
+RESULT test=insert engine=pg durability=default synchronous_commit=on,fsync=on clients=8 seconds=30 txns=26727 tps=890.9 lat_avg_ms=8.955 p50_ms=5.700 p95_ms=23.472 p99_ms=58.398 max_ms=369.623 retries=0 failed=0 total_txns=30306 run_s=35 client_cpu_s=39.62 server_cpu_s=59.34
+LOAD time=2026-11-04T14:37:58 vm_cpu_percent=19
+=== fb insert clients=8
+RESULT test=insert engine=fb durability=default forced_writes=1 clients=8 seconds=30 txns=10742 tps=358.1 lat_avg_ms=22.182 p50_ms=14.613 p95_ms=38.780 p99_ms=207.614 max_ms=1014.336 retries=0 failed=0 total_txns=12250 run_s=35 client_cpu_s=20.12 server_cpu_s=36.88
+LOAD time=2026-11-04T14:38:38 vm_cpu_percent=12
+=== pg fd:insert clients=1
+RESULT test=insert engine=pg driver=firedac durability=default clients=1 seconds=30 txns=11661 tps=388.7 lat_avg_ms=2.571 p50_ms=2.461 p95_ms=3.556 p99_ms=5.000 max_ms=123.010 retries=0 failed=0 total_txns=13264 run_s=35
+LOAD time=2026-11-04T14:39:15 vm_cpu_percent=5
+=== fb fd:insert clients=1
+RESULT test=insert engine=fb driver=firedac durability=default clients=1 seconds=30 txns=2243 tps=74.8 lat_avg_ms=13.371 p50_ms=12.301 p95_ms=19.783 p99_ms=33.433 max_ms=168.159 retries=0 failed=0 total_txns=2670 run_s=35
+LOAD time=2026-11-04T14:39:52 vm_cpu_percent=7
+=== pg insert clients=1
+RESULT test=insert engine=pg durability=default synchronous_commit=on,fsync=on clients=1 seconds=30 txns=5643 tps=188.1 lat_avg_ms=5.313 p50_ms=3.162 p95_ms=17.955 p99_ms=45.654 max_ms=198.149 retries=0 failed=0 total_txns=7348 run_s=35 client_cpu_s=10.45 server_cpu_s=14.39
+LOAD time=2026-11-04T14:40:31 vm_cpu_percent=41
+=== fb insert clients=1
+RESULT test=insert engine=fb durability=default forced_writes=1 clients=1 seconds=30 txns=1352 tps=45.1 lat_avg_ms=22.169 p50_ms=16.578 p95_ms=51.499 p99_ms=96.923 max_ms=179.395 retries=0 failed=0 total_txns=1576 run_s=35 client_cpu_s=8.20 server_cpu_s=7.56
+RUN pair toolRun 990b3412 started 2026-11-04T14:41:21
+machine: 4 logical CPUs, order pg,fb
+waiting for server to start...... done
+server started
+LOAD time=2026-11-04T14:41:36 vm_cpu_percent=83
+=== pg fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=automatic clients=16 seconds=20 txns=12386 tps=619.3 lat_avg_ms=25.551 p50_ms=4.760 p95_ms=162.670 p99_ms=305.383 max_ms=738.471 retries=0 failed=0 total_txns=13655 run_s=25
+LOAD time=2026-11-04T14:42:13 vm_cpu_percent=62
+=== fb fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=automatic clients=16 seconds=20 txns=41225 tps=2061.3 lat_avg_ms=7.749 p50_ms=2.124 p95_ms=30.634 p99_ms=63.907 max_ms=302.431 retries=0 failed=0 total_txns=50431 run_s=25
+LOAD time=2026-11-04T14:42:43 vm_cpu_percent=7
+=== pg fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=default clients=16 seconds=20 txns=53818 tps=2690.9 lat_avg_ms=5.940 p50_ms=2.085 p95_ms=24.808 p99_ms=44.757 max_ms=315.174 retries=0 failed=0 total_txns=66077 run_s=25
+LOAD time=2026-11-04T14:43:10 vm_cpu_percent=12
+=== fb fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=default clients=16 seconds=20 txns=34089 tps=1704.5 lat_avg_ms=9.379 p50_ms=1.915 p95_ms=38.507 p99_ms=95.281 max_ms=482.150 retries=0 failed=0 total_txns=48677 run_s=25
+LOAD time=2026-11-04T14:43:39 vm_cpu_percent=4
+=== pg oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=select scale=10 synchronous_commit=on,fsync=on clients=16 seconds=20 txns=97902 tps=4895.1 lat_avg_ms=3.230 p50_ms=0.666 p95_ms=2.179 p99_ms=92.602 max_ms=2516.980 retries=0 failed=0 total_txns=120240 run_s=25 client_cpu_s=39.91 server_cpu_s=45.97
+LOAD time=2026-11-04T14:44:08 vm_cpu_percent=60
+=== fb oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=select scale=10 forced_writes=1 clients=16 seconds=20 txns=27348 tps=1367.4 lat_avg_ms=11.636 p50_ms=4.255 p95_ms=39.711 p99_ms=163.016 max_ms=680.095 retries=0 failed=0 total_txns=34934 run_s=25 client_cpu_s=30.41 server_cpu_s=48.53
+LOAD time=2026-11-04T14:44:36 vm_cpu_percent=62
+=== pg fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=automatic clients=1 seconds=20 txns=4150 tps=207.5 lat_avg_ms=4.817 p50_ms=4.654 p95_ms=6.527 p99_ms=8.825 max_ms=19.870 retries=0 failed=0 total_txns=5040 run_s=25
+LOAD time=2026-11-04T14:45:03 vm_cpu_percent=11
+=== fb fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=automatic clients=1 seconds=20 txns=11506 tps=575.3 lat_avg_ms=1.737 p50_ms=1.624 p95_ms=2.731 p99_ms=3.711 max_ms=17.345 retries=0 failed=0 total_txns=14156 run_s=25
+LOAD time=2026-11-04T14:45:30 vm_cpu_percent=4
+=== pg fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=default clients=1 seconds=20 txns=14462 tps=723.1 lat_avg_ms=1.382 p50_ms=1.285 p95_ms=2.126 p99_ms=2.937 max_ms=14.377 retries=0 failed=0 total_txns=17922 run_s=25
+LOAD time=2026-11-04T14:45:56 vm_cpu_percent=26
+=== fb fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=default clients=1 seconds=20 txns=11404 tps=570.2 lat_avg_ms=1.752 p50_ms=1.635 p95_ms=2.724 p99_ms=3.731 max_ms=24.941 retries=0 failed=0 total_txns=13644 run_s=25
+LOAD time=2026-11-04T14:46:23 vm_cpu_percent=34
+=== pg oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=select scale=10 synchronous_commit=on,fsync=on clients=1 seconds=20 txns=31671 tps=1583.5 lat_avg_ms=0.630 p50_ms=0.578 p95_ms=1.004 p99_ms=1.424 max_ms=35.451 retries=0 failed=0 total_txns=38364 run_s=25 client_cpu_s=12.30 server_cpu_s=16.91
+LOAD time=2026-11-04T14:46:51 vm_cpu_percent=90
+=== fb oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=select scale=10 forced_writes=1 clients=1 seconds=20 txns=7166 tps=358.3 lat_avg_ms=2.788 p50_ms=2.477 p95_ms=4.450 p99_ms=7.620 max_ms=112.561 retries=0 failed=0 total_txns=9178 run_s=25 client_cpu_s=10.48 server_cpu_s=14.62
+ROUND 3 order fb pg, the .NET step of a test before its FireDAC steps (as round 1)
+RUN pair toolRun 367a41c7 started 2026-11-04T14:47:43
+machine: 4 logical CPUs, order fb,pg
+waiting for server to start...... done
+server started
+LOAD time=2026-11-04T14:47:54 vm_cpu_percent=81
+=== fb oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=tpcb scale=10 forced_writes=1 clients=1 seconds=20 txns=432 tps=21.6 lat_avg_ms=46.056 p50_ms=32.684 p95_ms=129.972 p99_ms=243.184 max_ms=428.201 retries=0 failed=0 total_txns=512 run_s=25 client_cpu_s=7.88 server_cpu_s=7.44
+LOAD time=2026-11-04T14:48:24 vm_cpu_percent=32
+=== pg oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=tpcb scale=10 synchronous_commit=on,fsync=on clients=1 seconds=20 txns=1252 tps=62.6 lat_avg_ms=15.938 p50_ms=9.567 p95_ms=51.454 p99_ms=98.304 max_ms=167.936 retries=0 failed=0 total_txns=1431 run_s=25 client_cpu_s=11.83 server_cpu_s=10.62
+LOAD time=2026-11-04T14:48:55 vm_cpu_percent=24
+=== fb fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=automatic clients=1 seconds=20 txns=284 tps=14.2 lat_avg_ms=69.775 p50_ms=45.526 p95_ms=178.788 p99_ms=282.700 max_ms=857.122 retries=0 failed=0 total_txns=325 run_s=25
+LOAD time=2026-11-04T14:49:23 vm_cpu_percent=15
+=== pg fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=automatic clients=1 seconds=20 txns=943 tps=47.2 lat_avg_ms=21.198 p50_ms=15.748 p95_ms=49.309 p99_ms=83.630 max_ms=352.645 retries=0 failed=0 total_txns=1177 run_s=25
+LOAD time=2026-11-04T14:49:50 vm_cpu_percent=8
+=== fb fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=default clients=1 seconds=20 txns=375 tps=18.8 lat_avg_ms=53.208 p50_ms=43.901 p95_ms=98.905 p99_ms=155.272 max_ms=273.080 retries=0 failed=0 total_txns=427 run_s=25
+LOAD time=2026-11-04T14:50:17 vm_cpu_percent=13
+=== pg fd:oltp script=tpcb scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=default clients=1 seconds=20 txns=1244 tps=62.2 lat_avg_ms=16.064 p50_ms=10.805 p95_ms=43.897 p99_ms=71.338 max_ms=205.007 retries=0 failed=0 total_txns=1569 run_s=25
+LOAD time=2026-11-04T14:50:45 vm_cpu_percent=38
+=== fb oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=tpcb scale=10 forced_writes=1 clients=16 seconds=20 txns=846 tps=42.3 lat_avg_ms=363.252 p50_ms=306.294 p95_ms=776.175 p99_ms=1100.352 max_ms=1617.145 retries=0 failed=0 total_txns=1080 run_s=25 client_cpu_s=21.08 server_cpu_s=28.28
+LOAD time=2026-11-04T14:51:17 vm_cpu_percent=84
+=== pg oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=tpcb scale=10 synchronous_commit=on,fsync=on clients=16 seconds=20 txns=1725 tps=86.2 lat_avg_ms=181.580 p50_ms=88.445 p95_ms=649.974 p99_ms=1147.739 max_ms=2485.611 retries=0 failed=0 total_txns=2205 run_s=25 client_cpu_s=26.89 server_cpu_s=30.98
+LOAD time=2026-11-04T14:51:56 vm_cpu_percent=89
+=== fb fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=automatic clients=16 seconds=20 txns=510 tps=25.5 lat_avg_ms=598.397 p50_ms=520.041 p95_ms=1341.473 p99_ms=2190.756 max_ms=3644.431 retries=0 failed=0 total_txns=596 run_s=25
+LOAD time=2026-11-04T14:52:34 vm_cpu_percent=86
+=== pg fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=automatic clients=16 seconds=20 txns=3460 tps=173.0 lat_avg_ms=90.404 p50_ms=37.372 p95_ms=365.511 p99_ms=662.294 max_ms=1460.146 retries=0 failed=0 total_txns=3927 run_s=25
+LOAD time=2026-11-04T14:53:07 vm_cpu_percent=21
+=== fb fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=tpcb scale=10 cursor=default clients=16 seconds=20 txns=2317 tps=115.9 lat_avg_ms=136.626 p50_ms=98.729 p95_ms=356.957 p99_ms=549.876 max_ms=1379.512 retries=0 failed=0 total_txns=2941 run_s=25
+LOAD time=2026-11-04T14:53:36 vm_cpu_percent=36
+=== pg fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=default clients=16 seconds=20 txns=9419 tps=471.0 lat_avg_ms=33.719 p50_ms=11.104 p95_ms=159.273 p99_ms=295.252 max_ms=924.517 retries=0 failed=0 total_txns=11703 run_s=25
+RUN pair toolRun 3b58e020 started 2026-11-04T14:54:17 (Mac load average below 60)
+machine: 4 logical CPUs, order fb,pg
+waiting for server to start.... done
+server started
+LOAD time=2026-11-04T14:54:23 vm_cpu_percent=32
+=== fb insert clients=1
+RESULT test=insert engine=fb durability=default forced_writes=1 clients=1 seconds=30 txns=2028 tps=67.6 lat_avg_ms=14.734 p50_ms=11.324 p95_ms=35.296 p99_ms=80.678 max_ms=260.918 retries=0 failed=0 total_txns=2484 run_s=35 client_cpu_s=6.14 server_cpu_s=8.28
+LOAD time=2026-11-04T14:55:02 vm_cpu_percent=5
+=== pg insert clients=1
+RESULT test=insert engine=pg durability=default synchronous_commit=on,fsync=on clients=1 seconds=30 txns=7674 tps=255.8 lat_avg_ms=3.907 p50_ms=2.914 p95_ms=7.391 p99_ms=25.743 max_ms=130.870 retries=0 failed=0 total_txns=9290 run_s=35 client_cpu_s=9.95 server_cpu_s=17.53
+LOAD time=2026-11-04T14:55:41 vm_cpu_percent=10
+=== fb fd:insert clients=1
+RESULT test=insert engine=fb driver=firedac durability=default clients=1 seconds=30 txns=2337 tps=77.9 lat_avg_ms=12.828 p50_ms=12.023 p95_ms=16.770 p99_ms=31.532 max_ms=150.173 retries=0 failed=0 total_txns=2739 run_s=35
+LOAD time=2026-11-04T14:56:18 vm_cpu_percent=6
+=== pg fd:insert clients=1
+RESULT test=insert engine=pg driver=firedac durability=default clients=1 seconds=30 txns=8826 tps=294.2 lat_avg_ms=3.397 p50_ms=3.004 p95_ms=5.419 p99_ms=11.157 max_ms=138.969 retries=0 failed=0 total_txns=10325 run_s=35
+LOAD time=2026-11-04T14:56:55 vm_cpu_percent=6
+=== fb insert clients=8
+RESULT test=insert engine=fb durability=default forced_writes=1 clients=8 seconds=30 txns=14491 tps=483.0 lat_avg_ms=16.533 p50_ms=12.245 p95_ms=37.982 p99_ms=111.351 max_ms=428.123 retries=0 failed=0 total_txns=17181 run_s=35 client_cpu_s=17.97 server_cpu_s=41.39
+LOAD time=2026-11-04T14:57:33 vm_cpu_percent=10
+=== pg insert clients=8
+RESULT test=insert engine=pg durability=default synchronous_commit=on,fsync=on clients=8 seconds=30 txns=46037 tps=1534.6 lat_avg_ms=5.209 p50_ms=2.923 p95_ms=12.453 p99_ms=51.128 max_ms=313.722 retries=0 failed=0 total_txns=48791 run_s=35 client_cpu_s=31.80 server_cpu_s=55.05
+LOAD time=2026-11-04T14:58:12 vm_cpu_percent=10
+=== fb fd:insert clients=8
+RESULT test=insert engine=fb driver=firedac durability=default clients=8 seconds=30 txns=12415 tps=413.8 lat_avg_ms=19.321 p50_ms=14.425 p95_ms=42.352 p99_ms=121.006 max_ms=392.973 retries=0 failed=0 total_txns=14929 run_s=35
+LOAD time=2026-11-04T14:58:50 vm_cpu_percent=5
+=== pg fd:insert clients=8
+RESULT test=insert engine=pg driver=firedac durability=default clients=8 seconds=30 txns=28367 tps=945.6 lat_avg_ms=8.451 p50_ms=3.680 p95_ms=33.666 p99_ms=76.884 max_ms=301.671 retries=0 failed=0 total_txns=38026 run_s=35
+RUN pair toolRun 5e6d6c0c started 2026-11-04T14:59:35 (stopped by the 600 s limit of the Forge in the last step, see the NOTE)
+machine: 4 logical CPUs, order fb,pg
+waiting for server to start.... done
+server started
+LOAD time=2026-11-04T14:59:42 vm_cpu_percent=66
+=== fb oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=select scale=10 forced_writes=1 clients=1 seconds=20 txns=5584 tps=279.2 lat_avg_ms=3.579 p50_ms=3.037 p95_ms=6.138 p99_ms=15.370 max_ms=83.310 retries=0 failed=0 total_txns=6532 run_s=25 client_cpu_s=9.23 server_cpu_s=11.75
+LOAD time=2026-11-04T15:00:13 vm_cpu_percent=10
+=== pg oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=select scale=10 synchronous_commit=on,fsync=on clients=1 seconds=20 txns=16970 tps=848.5 lat_avg_ms=1.176 p50_ms=0.854 p95_ms=2.034 p99_ms=7.124 max_ms=166.260 retries=0 failed=0 total_txns=20868 run_s=25 client_cpu_s=9.81 server_cpu_s=14.44
+LOAD time=2026-11-04T15:00:44 vm_cpu_percent=51
+=== fb fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=automatic clients=1 seconds=20 txns=3112 tps=155.6 lat_avg_ms=6.414 p50_ms=2.698 p95_ms=28.590 p99_ms=80.186 max_ms=154.862 retries=0 failed=0 total_txns=3465 run_s=25
+LOAD time=2026-11-04T15:01:15 vm_cpu_percent=11
+=== pg fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=automatic clients=1 seconds=20 txns=1704 tps=85.2 lat_avg_ms=11.727 p50_ms=8.372 p95_ms=30.147 p99_ms=70.323 max_ms=167.008 retries=0 failed=0 total_txns=1933 run_s=25
+LOAD time=2026-11-04T15:01:44 vm_cpu_percent=9
+=== fb fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=default clients=1 seconds=20 txns=6282 tps=314.1 lat_avg_ms=3.181 p50_ms=2.521 p95_ms=5.945 p99_ms=14.704 max_ms=95.805 retries=0 failed=0 total_txns=7784 run_s=25
+LOAD time=2026-11-04T15:02:11 vm_cpu_percent=39
+=== pg fd:oltp script=select scale=10 clients=1 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=default clients=1 seconds=20 txns=13659 tps=683.0 lat_avg_ms=1.463 p50_ms=1.189 p95_ms=2.689 p99_ms=5.304 max_ms=57.061 retries=0 failed=0 total_txns=16158 run_s=25
+LOAD time=2026-11-04T15:02:38 vm_cpu_percent=100
+=== fb oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb script=select scale=10 forced_writes=1 clients=16 seconds=20 txns=43934 tps=2196.7 lat_avg_ms=7.247 p50_ms=2.662 p95_ms=12.100 p99_ms=156.053 max_ms=502.890 retries=0 failed=0 total_txns=52928 run_s=25 client_cpu_s=32.38 server_cpu_s=53.36
+LOAD time=2026-11-04T15:03:06 vm_cpu_percent=46
+=== pg oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg script=select scale=10 synchronous_commit=on,fsync=on clients=16 seconds=20 txns=128934 tps=6446.7 lat_avg_ms=2.437 p50_ms=0.554 p95_ms=1.652 p99_ms=82.317 max_ms=2383.735 retries=0 failed=0 total_txns=155702 run_s=25 client_cpu_s=38.92 server_cpu_s=50.52
+LOAD time=2026-11-04T15:03:34 vm_cpu_percent=46
+=== fb fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=automatic clients=16 seconds=20 txns=64001 tps=3200.1 lat_avg_ms=4.994 p50_ms=1.487 p95_ms=22.018 p99_ms=38.645 max_ms=216.838 retries=0 failed=0 total_txns=78741 run_s=25
+LOAD time=2026-11-04T15:04:03 vm_cpu_percent=35
+=== pg fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=automatic clients=16 seconds=20 txns=22355 tps=1117.8 lat_avg_ms=14.277 p50_ms=3.253 p95_ms=71.627 p99_ms=137.216 max_ms=617.675 retries=0 failed=0 total_txns=26508 run_s=25
+LOAD time=2026-11-04T15:04:31 vm_cpu_percent=33
+=== fb fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=fb driver=firedac script=select scale=10 cursor=default clients=16 seconds=20 txns=60480 tps=3024.0 lat_avg_ms=5.280 p50_ms=1.487 p95_ms=23.126 p99_ms=42.967 max_ms=310.407 retries=0 failed=0 total_txns=74293 run_s=25
+LOAD time=2026-11-04T15:04:59 vm_cpu_percent=45
+=== pg fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5 cursor=default
+NOTE no output for more than 4 minutes, the run was stopped by the time limit at 15:09:36. Together with the failure in round 1 (also PostgreSQL, 16 FireDAC clients) this pointed to the program: it did not activate FDManager before its threads opened their connections, which "Multithreading (FireDAC)" in the RAD Studio documentation asks for. Fixed in the program (FDManager.Active := True before the clients start, FDManager.Close at the end); both failed steps are repeated below with the fixed build. Only these two repeats use it; the fix touches start and end of the program, not the measured loop.
+REPEAT of the two failed steps (round 1: pg fd:oltp script=tpcb clients=16; round 3: pg fd:oltp script=select clients=16 cursor=default), PostgreSQL only, with the fixed build:
+source: delphi/DbCompareBench.FireDAC.dpr SHA-256 0071232F366BA3E7B7387E3DF58385BEAF29933CBB7810C8F03EADBC2EBD81CC (FDManager.Active := True before the clients start, FDManager.Close at the end)
+BUILD FireDAC: Delphi 13 Florence, Win64 Release, 0 warnings, 0 errors, DbCompareBench.FireDAC.exe SHA-256 47D2383B9C8CDC494EAEC2AB5D8B5A25AEB0D78A0920A466BC3137D261B304F1
+RUN pg toolRun 00bbc9f4 started 2026-11-04T15:10:36 (Mac load average about 50)
+machine: 4 logical CPUs (Intel(R) Core(TM) i9-9880H CPU @ 2.30GHz), 8 GB, Microsoft Windows 11 Pro, .NET SDK 9.0.320
+server: PostgreSQL 18.1, 127.0.0.1:55434
+pg_ctl: another server might be running; trying to start anyway (stale postmaster.pid of the stopped run)
+waiting for server to start....... done
+server started
+LOAD time=2026-11-04T15:10:46 vm_cpu_percent=53
+=== pg fd:probe
+client: 1801000000, server: 1800010000
+in_transaction_after_prepare=False
+connection_ssl=false
+synchronous_commit=on
+LOAD time=2026-11-04T15:10:48 vm_cpu_percent=19
+=== pg fd:oltp script=select scale=10 clients=16 seconds=20 warmup=5 cursor=default
+RESULT test=oltp engine=pg driver=firedac script=select scale=10 cursor=default clients=16 seconds=20 txns=71143 tps=3557.2 lat_avg_ms=4.493 p50_ms=1.434 p95_ms=23.201 p99_ms=33.935 max_ms=229.250 retries=0 failed=0 total_txns=86265 run_s=25
+LOAD time=2026-11-04T15:11:15 vm_cpu_percent=27
+=== pg fd:oltp script=tpcb scale=10 clients=16 seconds=20 warmup=5
+RESULT test=oltp engine=pg driver=firedac script=tpcb scale=10 cursor=automatic clients=16 seconds=20 txns=11806 tps=590.3 lat_avg_ms=26.954 p50_ms=8.774 p95_ms=125.765 p99_ms=274.405 max_ms=630.428 retries=0 failed=0 total_txns=14732 run_s=25
+END of the FireDAC series. The committed delphi/DbCompareBench.FireDAC.dpr (SHA-256 F6BE3A40B4A40203F422E8E1C2AF8E942EBC392032FA97C6E13C98299D8F9692) differs from the build of the repeats only in one comment (the name of the FireDAC method that chooses wait or nowait).
