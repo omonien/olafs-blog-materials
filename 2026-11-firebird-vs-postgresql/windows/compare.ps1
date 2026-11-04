@@ -4,6 +4,8 @@
 #   PostgreSQL: the official EDB binaries 18.1 as a zip (no installation, no service)
 # setup: prepares both servers (copy, download, fill) and builds the .NET program; run it once.
 # run:   starts one server, runs the given steps against it one after the other, and stops it again.
+# pair:  starts both servers and runs every step for both engines back to back, in the order of -Order, so that
+#        both see the same load (as the Mac rounds do); Firebird-only and PostgreSQL-only steps run once.
 # build: builds the .NET program again (after a change of its source).
 # fsync: measures with pg_test_fsync how expensive a flush is on the disk of the work folder.
 # Examples: .\compare.ps1 setup
@@ -11,9 +13,10 @@
 # Steps are separated by semicolons, so that the list survives powershell -File as one argument.
 [CmdletBinding(PositionalBinding = $false)]
 param(
-  [Parameter(Mandatory, Position = 0)][ValidateSet('setup', 'build', 'run', 'fsync')][string]$Phase,
+  [Parameter(Mandatory, Position = 0)][ValidateSet('setup', 'build', 'run', 'pair', 'fsync')][string]$Phase,
   [ValidateSet('fb', 'pg')][string]$Engine,
   [string]$Steps = '',
+  [string]$Order = 'fb,pg',
   [string]$FirebirdDir = 'C:\Program Files\Firebird\Firebird_5_0',
   [string]$WorkDir = (Join-Path $env:LOCALAPPDATA 'dbbench-local')
 )
@@ -190,6 +193,26 @@ elseif ($Phase -eq 'setup') {
   Start-Postgres
   try { Invoke-Bench pg 'json-setup docs=500000' }
   finally { Stop-Postgres }
+}
+elseif ($Phase -eq 'pair') {
+  "machine: $([Environment]::ProcessorCount) logical CPUs, order $Order"
+  Write-FirebirdConf
+  $server = Start-Firebird
+  Start-Postgres
+  try {
+    foreach ($step in $Steps -split ';') {
+      foreach ($engine in $Order -split ',') {
+        # Wire encryption is a Firebird setting; these JSON queries need SQL/JSON, which only PostgreSQL has.
+        if ($engine -eq 'pg' -and $step -match 'wirecrypt=on') { continue }
+        if ($engine -eq 'fb' -and $step -match 'lookup-index|lookup-scan|agg-sql') { continue }
+        Invoke-Bench $engine $step.Trim()
+      }
+    }
+  }
+  finally {
+    Stop-Process -Id $server.Id -Force
+    Stop-Postgres
+  }
 }
 elseif ($Phase -eq 'fsync') {
   & (Join-Path $pgBin 'pg_test_fsync.exe') -s 2 -f (Join-Path $WorkDir 'pg_test_fsync.tmp')
