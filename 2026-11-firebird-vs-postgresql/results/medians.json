@@ -1,0 +1,2628 @@
+[
+ {
+  "platform": "mac",
+  "test": "bulk",
+  "engine": "fb",
+  "params": {
+   "mode": "native"
+  },
+  "metric": "rows_per_s",
+  "n": 3,
+  "median": 11346.0,
+  "min": 8441.0,
+  "max": 14811.0,
+  "load_s": 35.8,
+  "commit_s": 8.26,
+  "server_us_per_unit": 37.6,
+  "client_us_per_unit": 33.86,
+  "mac_load": [
+   14.49,
+   40.13
+  ],
+  "vm_load": [
+   1.5,
+   3.21
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "bulk",
+  "engine": "fb",
+  "params": {
+   "mode": "prepared"
+  },
+  "metric": "rows_per_s",
+  "n": 3,
+  "median": 704.0,
+  "min": 662.0,
+  "max": 1392.0,
+  "load_s": 140.45,
+  "commit_s": 1.33,
+  "server_us_per_unit": 790.9000000000001,
+  "client_us_per_unit": 426.59999999999997,
+  "mac_load": [
+   19.54,
+   207.93
+  ],
+  "vm_load": [
+   5.38,
+   6.88
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "bulk",
+  "engine": "pg",
+  "params": {
+   "mode": "native"
+  },
+  "metric": "rows_per_s",
+  "n": 3,
+  "median": 108328.0,
+  "min": 99327.0,
+  "max": 160199.0,
+  "load_s": 4.57,
+  "commit_s": 0.02,
+  "server_us_per_unit": 5.6,
+  "client_us_per_unit": 12.72,
+  "mac_load": [
+   11.21,
+   25.84
+  ],
+  "vm_load": [
+   1.32,
+   3.4
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "bulk",
+  "engine": "pg",
+  "params": {
+   "mode": "prepared"
+  },
+  "metric": "rows_per_s",
+  "n": 3,
+  "median": 1534.0,
+  "min": 1310.0,
+  "max": 2393.0,
+  "load_s": 65.17,
+  "commit_s": 0.01,
+  "server_us_per_unit": 253.6,
+  "client_us_per_unit": 575.0,
+  "mac_load": [
+   16.33,
+   94.21
+  ],
+  "vm_load": [
+   1.63,
+   6.46
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "fill",
+  "engine": "fb",
+  "params": {},
+  "metric": "seconds",
+  "n": 1,
+  "median": 164.0,
+  "min": 164.0,
+  "max": 164.0,
+  "mac_load": [
+   88.87,
+   88.87
+  ],
+  "vm_load": [
+   1.2,
+   1.2
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "fill",
+  "engine": "pg",
+  "params": {},
+  "metric": "seconds",
+  "n": 1,
+  "median": 34.0,
+  "min": 34.0,
+  "max": 34.0,
+  "mac_load": [
+   88.87,
+   88.87
+  ],
+  "vm_load": [
+   1.2,
+   1.2
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "insert",
+  "engine": "fb",
+  "params": {
+   "durability": "default",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 130.3,
+  "min": 117.1,
+  "max": 249.8,
+  "p50_ms": 7.11,
+  "p95_ms": 11.091,
+  "p99_ms": 23.919,
+  "lat_avg_ms": 7.671,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 2671.721677074041,
+  "client_us_per_unit": 1485.2809991079394,
+  "mac_load": [
+   14.61,
+   33.65
+  ],
+  "vm_load": [
+   2.24,
+   2.89
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "insert",
+  "engine": "fb",
+  "params": {
+   "durability": "default",
+   "clients": "8"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 716.4,
+  "min": 417.8,
+  "max": 1011.7,
+  "p50_ms": 9.792,
+  "p95_ms": 17.392,
+  "p99_ms": 47.064,
+  "lat_avg_ms": 11.161,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 1638.6235562127813,
+  "client_us_per_unit": 498.38135965788746,
+  "mac_load": [
+   14.42,
+   22.11
+  ],
+  "vm_load": [
+   1.28,
+   4.67
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "insert",
+  "engine": "fb",
+  "params": {
+   "durability": "relaxed",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 694.1,
+  "min": 383.1,
+  "max": 1001.6,
+  "p50_ms": 1.364,
+  "p95_ms": 2.139,
+  "p99_ms": 3.014,
+  "lat_avg_ms": 1.44,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 858.9753998538605,
+  "client_us_per_unit": 412.8440366972477,
+  "mac_load": [
+   12.23,
+   22.86
+  ],
+  "vm_load": [
+   3.65,
+   5.37
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "insert",
+  "engine": "fb",
+  "params": {
+   "durability": "relaxed",
+   "clients": "8"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 2355.3,
+  "min": 1961.3,
+  "max": 3999.9,
+  "p50_ms": 2.838,
+  "p95_ms": 6.097,
+  "p99_ms": 8.335,
+  "lat_avg_ms": 3.393,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 930.8826020667458,
+  "client_us_per_unit": 317.75610464412773,
+  "mac_load": [
+   11.61,
+   24.03
+  ],
+  "vm_load": [
+   2.4,
+   6.89
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "insert",
+  "engine": "pg",
+  "params": {
+   "durability": "default",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 782.8,
+  "min": 384.6,
+  "max": 877.3,
+  "p50_ms": 1.053,
+  "p95_ms": 2.219,
+  "p99_ms": 3.198,
+  "lat_avg_ms": 1.276,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 450.54599732893394,
+  "client_us_per_unit": 957.2629428863225,
+  "mac_load": [
+   13.4,
+   26.5
+  ],
+  "vm_load": [
+   1.69,
+   3.03
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "insert",
+  "engine": "pg",
+  "params": {
+   "durability": "default",
+   "clients": "8"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 2722.2,
+  "min": 1672.0,
+  "max": 4045.6,
+  "p50_ms": 1.975,
+  "p95_ms": 6.509,
+  "p99_ms": 19.972,
+  "lat_avg_ms": 2.937,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 378.5643569209053,
+  "client_us_per_unit": 510.79722007116465,
+  "mac_load": [
+   12.36,
+   16.07
+  ],
+  "vm_load": [
+   1.9,
+   4.27
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "insert",
+  "engine": "pg",
+  "params": {
+   "durability": "relaxed",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 1383.4,
+  "min": 753.5,
+  "max": 1541.1,
+  "p50_ms": 0.619,
+  "p95_ms": 1.255,
+  "p99_ms": 2.123,
+  "lat_avg_ms": 0.722,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 312.6654945241172,
+  "client_us_per_unit": 786.1122291185629,
+  "mac_load": [
+   11.89,
+   16.87
+  ],
+  "vm_load": [
+   2.68,
+   4.99
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "insert",
+  "engine": "pg",
+  "params": {
+   "durability": "relaxed",
+   "clients": "8"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 4673.9,
+  "min": 1782.7,
+  "max": 8545.8,
+  "p50_ms": 1.568,
+  "p95_ms": 2.923,
+  "p99_ms": 4.256,
+  "lat_avg_ms": 1.71,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 446.3626234679953,
+  "client_us_per_unit": 668.1355550269783,
+  "mac_load": [
+   12.06,
+   46.51
+  ],
+  "vm_load": [
+   2.5,
+   5.58
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json",
+  "engine": "fb",
+  "params": {
+   "query": "agg-client",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 15,
+  "median": 4532.2,
+  "min": 2403.1,
+  "max": 12749.5,
+  "server_cpu_s": 3.73,
+  "answers": [
+   "cancelled:125000:62501250.00,open:125000:62497500.00,paid:125000:62498750.00,shipped:125000:62500000.00"
+  ],
+  "mac_load": [
+   16.07,
+   42.48
+  ],
+  "vm_load": [
+   3.64,
+   7.09
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json",
+  "engine": "fb",
+  "params": {
+   "query": "lookup-client",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 15,
+  "median": 4966.8,
+  "min": 3084.5,
+  "max": 12161.9,
+  "server_cpu_s": 4.35,
+  "answers": [
+   "50:27165.00"
+  ],
+  "mac_load": [
+   14.78,
+   67.96
+  ],
+  "vm_load": [
+   5.52,
+   10.83
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json",
+  "engine": "fb",
+  "params": {
+   "query": "lookup-like",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 15,
+  "median": 2923.3,
+  "min": 1567.9,
+  "max": 4337.9,
+  "server_cpu_s": 2.91,
+  "answers": [
+   "50:27165.00"
+  ],
+  "mac_load": [
+   19.21,
+   47.46
+  ],
+  "vm_load": [
+   8.87,
+   16.17
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "agg-client",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 15,
+  "median": 3063.4,
+  "min": 1366.2,
+  "max": 5309.3,
+  "server_cpu_s": 2.41,
+  "answers": [
+   "cancelled:125000:62501250.00,open:125000:62497500.00,paid:125000:62498750.00,shipped:125000:62500000.00"
+  ],
+  "mac_load": [
+   13.68,
+   35.35
+  ],
+  "vm_load": [
+   4.27,
+   5.71
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "agg-sql",
+   "parallel": "off"
+  },
+  "metric": "ms",
+  "n": 15,
+  "median": 1650.7,
+  "min": 836.0,
+  "max": 2247.2,
+  "server_cpu_s": 1.69,
+  "answers": [
+   "cancelled:125000:62501250.00,open:125000:62497500.00,paid:125000:62498750.00,shipped:125000:62500000.00"
+  ],
+  "mac_load": [
+   13.5,
+   29.44
+  ],
+  "vm_load": [
+   2.57,
+   4.57
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "agg-sql",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 15,
+  "median": 1188.1,
+  "min": 578.5,
+  "max": 1802.6,
+  "server_cpu_s": 2.15,
+  "answers": [
+   "cancelled:125000:62501250.00,open:125000:62497500.00,paid:125000:62498750.00,shipped:125000:62500000.00"
+  ],
+  "mac_load": [
+   13.8,
+   30.7
+  ],
+  "vm_load": [
+   2.68,
+   4.95
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "lookup-client",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 15,
+  "median": 3056.8,
+  "min": 1753.8,
+  "max": 5482.5,
+  "server_cpu_s": 2.32,
+  "answers": [
+   "50:27165.00"
+  ],
+  "mac_load": [
+   16.02,
+   57.52
+  ],
+  "vm_load": [
+   6.54,
+   7.36
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "lookup-index",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 15,
+  "median": 1.8,
+  "min": 0.9,
+  "max": 226.4,
+  "server_cpu_s": 0.0,
+  "answers": [
+   "50:27165.00"
+  ],
+  "mac_load": [
+   12.83,
+   30.4
+  ],
+  "vm_load": [
+   2.91,
+   4.68
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "lookup-like",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 15,
+  "median": 1071.1,
+  "min": 471.2,
+  "max": 2297.7,
+  "server_cpu_s": 3.05,
+  "answers": [
+   "50:27165.00"
+  ],
+  "mac_load": [
+   19.97,
+   47.42
+  ],
+  "vm_load": [
+   8.32,
+   12.95
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "lookup-scan",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 15,
+  "median": 132.7,
+  "min": 64.2,
+  "max": 313.0,
+  "server_cpu_s": 0.19,
+  "answers": [
+   "50:27165.00"
+  ],
+  "mac_load": [
+   12.83,
+   32.85
+  ],
+  "vm_load": [
+   2.68,
+   4.95
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json-setup",
+  "engine": "fb",
+  "params": {},
+  "metric": "load_s",
+  "n": 1,
+  "median": 103.0,
+  "min": 103.0,
+  "max": 103.0,
+  "load_s": 103.0,
+  "mac_load": [
+   87.98,
+   87.98
+  ],
+  "vm_load": [
+   3.43,
+   3.43
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "json-setup",
+  "engine": "pg",
+  "params": {},
+  "metric": "load_s",
+  "n": 1,
+  "median": 11.5,
+  "min": 11.5,
+  "max": 11.5,
+  "load_s": 11.5,
+  "mac_load": [
+   64.77,
+   64.77
+  ],
+  "vm_load": [
+   2.39,
+   2.39
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "select",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 624.1,
+  "min": 563.7,
+  "max": 911.5,
+  "p50_ms": 1.506,
+  "p95_ms": 2.442,
+  "p99_ms": 3.289,
+  "lat_avg_ms": 1.601,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 952.7841094106154,
+  "client_us_per_unit": 593.2920872679908,
+  "mac_load": [
+   11.36,
+   53.8
+  ],
+  "vm_load": [
+   1.58,
+   3.35
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "select",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 3424.2,
+  "min": 1951.3,
+  "max": 4244.6,
+  "p50_ms": 4.232,
+  "p95_ms": 8.366,
+  "p99_ms": 12.204,
+  "lat_avg_ms": 4.67,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 812.1899529971703,
+  "client_us_per_unit": 313.8652427690231,
+  "mac_load": [
+   20.95,
+   62.86
+  ],
+  "vm_load": [
+   3.13,
+   8.83
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "select",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 1360.0,
+  "min": 1341.3,
+  "max": 1868.8,
+  "p50_ms": 2.733,
+  "p95_ms": 4.295,
+  "p99_ms": 5.708,
+  "lat_avg_ms": 2.939,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 1315.6853795831432,
+  "client_us_per_unit": 563.8276173548181,
+  "mac_load": [
+   10.84,
+   36.97
+  ],
+  "vm_load": [
+   1.68,
+   3.33
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "simple",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 134.3,
+  "min": 83.5,
+  "max": 177.9,
+  "p50_ms": 6.034,
+  "p95_ms": 11.308,
+  "p99_ms": 34.551,
+  "lat_avg_ms": 7.441,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 3823.4425745497488,
+  "client_us_per_unit": 1623.8559196929436,
+  "mac_load": [
+   30.19,
+   77.15
+  ],
+  "vm_load": [
+   6.84,
+   10.75
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "simple",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 438.2,
+  "min": 345.6,
+  "max": 721.6,
+  "p50_ms": 32.641,
+  "p95_ms": 60.825,
+  "p99_ms": 103.298,
+  "lat_avg_ms": 36.399,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 3997.7068603095736,
+  "client_us_per_unit": 1375.8838142556851,
+  "mac_load": [
+   14.47,
+   58.79
+  ],
+  "vm_load": [
+   4.16,
+   8.77
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "simple",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 351.9,
+  "min": 215.6,
+  "max": 408.6,
+  "p50_ms": 10.191,
+  "p95_ms": 16.967,
+  "p99_ms": 48.933,
+  "lat_avg_ms": 11.359,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 3397.926994141505,
+  "client_us_per_unit": 1214.5110410094635,
+  "mac_load": [
+   20.08,
+   65.55
+  ],
+  "vm_load": [
+   5.04,
+   5.32
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "tpcb",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 57.9,
+  "min": 44.5,
+  "max": 167.8,
+  "p50_ms": 15.445,
+  "p95_ms": 27.503,
+  "p99_ms": 62.807,
+  "lat_avg_ms": 17.251,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 8257.790368271955,
+  "client_us_per_unit": 3718.130311614731,
+  "mac_load": [
+   13.7,
+   36.42
+  ],
+  "vm_load": [
+   5.66,
+   9.99
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "tpcb",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 239.4,
+  "min": 197.1,
+  "max": 267.2,
+  "p50_ms": 50.665,
+  "p95_ms": 189.312,
+  "p99_ms": 335.155,
+  "lat_avg_ms": 66.535,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 7420.387531592249,
+  "client_us_per_unit": 2326.8744734625107,
+  "mac_load": [
+   13.63,
+   60.69
+  ],
+  "vm_load": [
+   3.98,
+   7.98
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "tpcb",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 162.2,
+  "min": 116.2,
+  "max": 406.6,
+  "p50_ms": 20.305,
+  "p95_ms": 44.668,
+  "p99_ms": 79.75,
+  "lat_avg_ms": 24.617,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 7508.353221957041,
+  "client_us_per_unit": 2911.6945107398565,
+  "mac_load": [
+   9.86,
+   39.78
+  ],
+  "vm_load": [
+   4.15,
+   5.1
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "tpcb",
+   "clients": "64"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 110.3,
+  "min": 78.2,
+  "max": 165.2,
+  "p50_ms": 306.266,
+  "p95_ms": 1785.847,
+  "p99_ms": 3229.582,
+  "lat_avg_ms": 535.43,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 12776.099362202081,
+  "client_us_per_unit": 2685.464921114468,
+  "mac_load": [
+   20.23,
+   39.8
+  ],
+  "vm_load": [
+   7.95,
+   10.46
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "select",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 1796.7,
+  "min": 1550.8,
+  "max": 2625.3,
+  "p50_ms": 0.512,
+  "p95_ms": 0.894,
+  "p99_ms": 1.276,
+  "lat_avg_ms": 0.556,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 228.69738926775506,
+  "client_us_per_unit": 548.0930403435053,
+  "mac_load": [
+   12.24,
+   60.39
+  ],
+  "vm_load": [
+   1.42,
+   3.55
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "select",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 19692.9,
+  "min": 8600.0,
+  "max": 21609.8,
+  "p50_ms": 0.714,
+  "p95_ms": 1.651,
+  "p99_ms": 2.533,
+  "lat_avg_ms": 0.811,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 145.94737119654064,
+  "client_us_per_unit": 173.2426303854875,
+  "mac_load": [
+   29.29,
+   41.73
+  ],
+  "vm_load": [
+   3.37,
+   6.7
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "select",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 5292.8,
+  "min": 4616.1,
+  "max": 6729.1,
+  "p50_ms": 0.671,
+  "p95_ms": 1.386,
+  "p99_ms": 2.066,
+  "lat_avg_ms": 0.755,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 211.60561705921688,
+  "client_us_per_unit": 410.4316814027788,
+  "mac_load": [
+   10.48,
+   37.52
+  ],
+  "vm_load": [
+   2.55,
+   2.7
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "simple",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 366.5,
+  "min": 244.4,
+  "max": 413.6,
+  "p50_ms": 2.223,
+  "p95_ms": 4.198,
+  "p99_ms": 13.032,
+  "lat_avg_ms": 2.727,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 876.2886597938144,
+  "client_us_per_unit": 1894.0557139723624,
+  "mac_load": [
+   23.57,
+   120.29
+  ],
+  "vm_load": [
+   7.37,
+   9.02
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "simple",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 2728.8,
+  "min": 1972.5,
+  "max": 4277.1,
+  "p50_ms": 5.191,
+  "p95_ms": 9.037,
+  "p99_ms": 25.248,
+  "lat_avg_ms": 5.86,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 869.657023920847,
+  "client_us_per_unit": 1007.3602606256223,
+  "mac_load": [
+   12.87,
+   65.55
+  ],
+  "vm_load": [
+   5.16,
+   6.7
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "simple",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 982.1,
+  "min": 436.2,
+  "max": 1207.3,
+  "p50_ms": 3.709,
+  "p95_ms": 5.636,
+  "p99_ms": 22.527,
+  "lat_avg_ms": 4.071,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 1098.8379255122572,
+  "client_us_per_unit": 1814.5608343941199,
+  "mac_load": [
+   17.44,
+   57.48
+  ],
+  "vm_load": [
+   4.7,
+   5.03
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "tpcb",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 180.4,
+  "min": 145.5,
+  "max": 456.1,
+  "p50_ms": 4.817,
+  "p95_ms": 8.419,
+  "p99_ms": 24.67,
+  "lat_avg_ms": 5.539,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 2071.428571428571,
+  "client_us_per_unit": 4410.138248847927,
+  "mac_load": [
+   11.5,
+   46.12
+  ],
+  "vm_load": [
+   5.25,
+   7.93
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "tpcb",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 1315.0,
+  "min": 1131.9,
+  "max": 2351.4,
+  "p50_ms": 9.009,
+  "p95_ms": 29.843,
+  "p99_ms": 56.643,
+  "lat_avg_ms": 12.147,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 1589.6032831737346,
+  "client_us_per_unit": 1763.1858945128438,
+  "mac_load": [
+   16.93,
+   39.86
+  ],
+  "vm_load": [
+   4.79,
+   5.33
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "tpcb",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 563.8,
+  "min": 475.7,
+  "max": 1249.7,
+  "p50_ms": 6.001,
+  "p95_ms": 11.894,
+  "p99_ms": 27.96,
+  "lat_avg_ms": 7.089,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 1896.7612783298778,
+  "client_us_per_unit": 3145.063273039251,
+  "mac_load": [
+   10.09,
+   81.33
+  ],
+  "vm_load": [
+   4.12,
+   5.68
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "tpcb",
+   "clients": "64"
+  },
+  "metric": "tps",
+  "n": 3,
+  "median": 1071.1,
+  "min": 1039.0,
+  "max": 2179.8,
+  "p50_ms": 29.445,
+  "p95_ms": 198.892,
+  "p99_ms": 355.451,
+  "lat_avg_ms": 59.5,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 2032.542938599541,
+  "client_us_per_unit": 1868.0898407621164,
+  "mac_load": [
+   22.66,
+   31.17
+  ],
+  "vm_load": [
+   6.55,
+   7.42
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp-setup",
+  "engine": "fb",
+  "params": {
+   "scale": "10"
+  },
+  "metric": "seconds",
+  "n": 3,
+  "median": 26.2,
+  "min": 23.5,
+  "max": 26.4,
+  "mac_load": [
+   10.4,
+   58.32
+  ],
+  "vm_load": [
+   1.54,
+   3.55
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "oltp-setup",
+  "engine": "pg",
+  "params": {
+   "scale": "10"
+  },
+  "metric": "seconds",
+  "n": 3,
+  "median": 6.8,
+  "min": 4.8,
+  "max": 6.8,
+  "mac_load": [
+   8.51,
+   53.56
+  ],
+  "vm_load": [
+   1.6,
+   3.45
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "read",
+  "engine": "fb",
+  "params": {
+   "zoned": "on",
+   "wirecrypt": "off"
+  },
+  "metric": "rows_per_s",
+  "n": 9,
+  "median": 90071.0,
+  "min": 69796.0,
+  "max": 176586.0,
+  "server_us_per_unit": 10.24,
+  "client_us_per_unit": 9.05,
+  "mac_load": [
+   11.24,
+   31.89
+  ],
+  "vm_load": [
+   2.26,
+   3.15
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "read",
+  "engine": "fb",
+  "params": {
+   "zoned": "on",
+   "wirecrypt": "on"
+  },
+  "metric": "rows_per_s",
+  "n": 9,
+  "median": 72330.0,
+  "min": 63650.0,
+  "max": 171883.0,
+  "server_us_per_unit": 13.23,
+  "client_us_per_unit": 12.505,
+  "mac_load": [
+   12.46,
+   22.74
+  ],
+  "vm_load": [
+   2.86,
+   3.89
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "read",
+  "engine": "pg",
+  "params": {
+   "zoned": "on",
+   "wirecrypt": "off"
+  },
+  "metric": "rows_per_s",
+  "n": 9,
+  "median": 246778.0,
+  "min": 164979.0,
+  "max": 563106.0,
+  "server_us_per_unit": 4.195,
+  "client_us_per_unit": 6.54,
+  "mac_load": [
+   11.96,
+   24.4
+  ],
+  "vm_load": [
+   1.96,
+   3.35
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "size",
+  "engine": "fb",
+  "params": {
+   "table": ""
+  },
+  "metric": "database_mb",
+  "n": 4,
+  "median": 645.7,
+  "min": 475.9,
+  "max": 645.7,
+  "mac_load": [
+   12.66,
+   27.0
+  ],
+  "vm_load": [
+   1.4,
+   4.02
+  ]
+ },
+ {
+  "platform": "mac",
+  "test": "size",
+  "engine": "pg",
+  "params": {
+   "table": ""
+  },
+  "metric": "database_mb",
+  "n": 4,
+  "median": 804.25,
+  "min": 559.1,
+  "max": 821.9,
+  "mac_load": [
+   12.66,
+   65.85
+  ],
+  "vm_load": [
+   2.41,
+   4.15
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "bulk",
+  "engine": "fb",
+  "params": {
+   "mode": "native"
+  },
+  "metric": "rows_per_s",
+  "n": 2,
+  "median": 3507.0,
+  "min": 3081.0,
+  "max": 3933.0,
+  "load_s": 118.16999999999999,
+  "commit_s": 26.555,
+  "server_us_per_unit": 150.0,
+  "client_us_per_unit": 83.67,
+  "vm_cpu": [
+   14.0,
+   32.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "bulk",
+  "engine": "fb",
+  "params": {
+   "mode": "prepared"
+  },
+  "metric": "rows_per_s",
+  "n": 1,
+  "median": 419.0,
+  "min": 419.0,
+  "max": 419.0,
+  "load_s": 235.34,
+  "commit_s": 3.38,
+  "server_us_per_unit": 1321.9999999999998,
+  "client_us_per_unit": 779.5,
+  "vm_cpu": [
+   32.0,
+   32.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "bulk",
+  "engine": "pg",
+  "params": {
+   "mode": "native"
+  },
+  "metric": "rows_per_s",
+  "n": 2,
+  "median": 28362.5,
+  "min": 22189.0,
+  "max": 34536.0,
+  "load_s": 18.47,
+  "commit_s": 0.035,
+  "server_us_per_unit": 22.96,
+  "client_us_per_unit": 33.57,
+  "vm_cpu": [
+   3.0,
+   22.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "bulk",
+  "engine": "pg",
+  "params": {
+   "mode": "prepared"
+  },
+  "metric": "rows_per_s",
+  "n": 2,
+  "median": 607.5,
+  "min": 572.0,
+  "max": 643.0,
+  "load_s": 165.18,
+  "commit_s": 0.02,
+  "server_us_per_unit": 852.3499999999999,
+  "client_us_per_unit": 699.0,
+  "vm_cpu": [
+   18.0,
+   70.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "insert",
+  "engine": "fb",
+  "params": {
+   "durability": "default",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 107.69999999999999,
+  "min": 78.8,
+  "max": 136.6,
+  "p50_ms": 9.354,
+  "p95_ms": 14.313,
+  "p99_ms": 20.371000000000002,
+  "lat_avg_ms": 9.998000000000001,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 3173.6382958113245,
+  "client_us_per_unit": 1811.8657298985167,
+  "vm_cpu": [
+   4.0,
+   30.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "insert",
+  "engine": "fb",
+  "params": {
+   "durability": "default",
+   "clients": "8"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 568.6,
+  "min": 435.1,
+  "max": 702.1,
+  "p50_ms": 12.706499999999998,
+  "p95_ms": 23.017,
+  "p99_ms": 62.589999999999996,
+  "lat_avg_ms": 14.881499999999999,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 2584.749904039897,
+  "client_us_per_unit": 1112.8939708006806,
+  "vm_cpu": [
+   7.0,
+   17.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "insert",
+  "engine": "fb",
+  "params": {
+   "durability": "relaxed",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 177.35,
+  "min": 151.0,
+  "max": 203.7,
+  "p50_ms": 5.0855,
+  "p95_ms": 9.9655,
+  "p99_ms": 15.6545,
+  "lat_avg_ms": 5.7605,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 3281.660719451532,
+  "client_us_per_unit": 1993.0185831294907,
+  "vm_cpu": [
+   12.0,
+   20.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "insert",
+  "engine": "fb",
+  "params": {
+   "durability": "relaxed",
+   "clients": "8"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 620.4,
+  "min": 257.5,
+  "max": 983.3,
+  "p50_ms": 8.9885,
+  "p95_ms": 71.5835,
+  "p99_ms": 167.3935,
+  "lat_avg_ms": 19.5875,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 3862.2365615473036,
+  "client_us_per_unit": 2507.215047516906,
+  "vm_cpu": [
+   39.0,
+   50.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "insert",
+  "engine": "pg",
+  "params": {
+   "durability": "default",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 445.75,
+  "min": 275.8,
+  "max": 615.7,
+  "p50_ms": 2.335,
+  "p95_ms": 4.1875,
+  "p99_ms": 6.13,
+  "lat_avg_ms": 2.623,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 1472.434561313852,
+  "client_us_per_unit": 835.0840295605931,
+  "vm_cpu": [
+   8.0,
+   54.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "insert",
+  "engine": "pg",
+  "params": {
+   "durability": "default",
+   "clients": "8"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 1873.9499999999998,
+  "min": 1414.3,
+  "max": 2333.6,
+  "p50_ms": 3.185,
+  "p95_ms": 8.853,
+  "p99_ms": 27.746000000000002,
+  "lat_avg_ms": 4.5395,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 1029.5778391761528,
+  "client_us_per_unit": 499.22151401760436,
+  "vm_cpu": [
+   4.0,
+   10.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "insert",
+  "engine": "pg",
+  "params": {
+   "durability": "relaxed",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 675.8,
+  "min": 494.9,
+  "max": 856.7,
+  "p50_ms": 1.348,
+  "p95_ms": 2.9524999999999997,
+  "p99_ms": 4.975,
+  "lat_avg_ms": 1.5919999999999999,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 1037.524349211971,
+  "client_us_per_unit": 788.4970568901895,
+  "vm_cpu": [
+   25.0,
+   69.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "insert",
+  "engine": "pg",
+  "params": {
+   "durability": "relaxed",
+   "clients": "8"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 1240.85,
+  "min": 863.2,
+  "max": 1618.5,
+  "p50_ms": 2.1494999999999997,
+  "p95_ms": 19.3405,
+  "p99_ms": 73.6625,
+  "lat_avg_ms": 7.0365,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 1518.2670412798477,
+  "client_us_per_unit": 1147.3998921135376,
+  "vm_cpu": [
+   10.0,
+   20.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json",
+  "engine": "fb",
+  "params": {
+   "query": "agg-client",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 5,
+  "median": 31562.5,
+  "min": 20047.5,
+  "max": 105982.9,
+  "server_cpu_s": 20.73,
+  "answers": [
+   "cancelled:125000:62501250.00,open:125000:62497500.00,paid:125000:62498750.00,shipped:125000:62500000.00"
+  ],
+  "vm_cpu": [
+   79.0,
+   79.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json",
+  "engine": "fb",
+  "params": {
+   "query": "lookup-client",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 5,
+  "median": 15166.1,
+  "min": 14023.9,
+  "max": 21296.0,
+  "server_cpu_s": 12.47,
+  "answers": [
+   "50:27165.00"
+  ],
+  "vm_cpu": [
+   100.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json",
+  "engine": "fb",
+  "params": {
+   "query": "lookup-like",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 5,
+  "median": 6318.2,
+  "min": 6175.0,
+  "max": 36937.1,
+  "server_cpu_s": 5.72,
+  "answers": [
+   "50:27165.00"
+  ],
+  "vm_cpu": [
+   100.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "agg-client",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 5,
+  "median": 10585.8,
+  "min": 9813.4,
+  "max": 14163.7,
+  "server_cpu_s": 8.45,
+  "answers": [
+   "cancelled:125000:62501250.00,open:125000:62497500.00,paid:125000:62498750.00,shipped:125000:62500000.00"
+  ],
+  "vm_cpu": [
+   94.0,
+   94.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "agg-sql",
+   "parallel": "off"
+  },
+  "metric": "ms",
+  "n": 5,
+  "median": 9347.7,
+  "min": 8878.6,
+  "max": 10446.4,
+  "server_cpu_s": 8.08,
+  "answers": [
+   "cancelled:125000:62501250.00,open:125000:62497500.00,paid:125000:62498750.00,shipped:125000:62500000.00"
+  ],
+  "vm_cpu": [
+   100.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "agg-sql",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 5,
+  "median": 7723.8,
+  "min": 6571.0,
+  "max": 7973.6,
+  "server_cpu_s": 8.98,
+  "answers": [
+   "cancelled:125000:62501250.00,open:125000:62497500.00,paid:125000:62498750.00,shipped:125000:62500000.00"
+  ],
+  "vm_cpu": [
+   100.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "lookup-client",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 5,
+  "median": 11517.0,
+  "min": 10748.5,
+  "max": 16012.3,
+  "server_cpu_s": 9.95,
+  "answers": [
+   "50:27165.00"
+  ],
+  "vm_cpu": [
+   100.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "lookup-index",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 5,
+  "median": 3.6,
+  "min": 3.0,
+  "max": 542.5,
+  "server_cpu_s": 0.0,
+  "answers": [
+   "50:27165.00"
+  ],
+  "vm_cpu": [
+   100.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "lookup-like",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 5,
+  "median": 4524.3,
+  "min": 4104.6,
+  "max": 5678.6,
+  "server_cpu_s": 8.95,
+  "answers": [
+   "50:27165.00"
+  ],
+  "vm_cpu": [
+   52.0,
+   52.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json",
+  "engine": "pg",
+  "params": {
+   "query": "lookup-scan",
+   "parallel": "on"
+  },
+  "metric": "ms",
+  "n": 5,
+  "median": 1142.8,
+  "min": 1060.2,
+  "max": 1449.0,
+  "server_cpu_s": 2.08,
+  "answers": [
+   "50:27165.00"
+  ],
+  "vm_cpu": [
+   100.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json-setup",
+  "engine": "fb",
+  "params": {},
+  "metric": "load_s",
+  "n": 2,
+  "median": 43.05,
+  "min": 33.5,
+  "max": 52.6,
+  "load_s": 43.05,
+  "vm_cpu": [
+   17.0,
+   38.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "json-setup",
+  "engine": "pg",
+  "params": {},
+  "metric": "load_s",
+  "n": 1,
+  "median": 16.1,
+  "min": 16.1,
+  "max": 16.1,
+  "load_s": 16.1,
+  "vm_cpu": [
+   8.0,
+   8.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "select",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 294.75,
+  "min": 240.9,
+  "max": 348.6,
+  "p50_ms": 3.0149999999999997,
+  "p95_ms": 6.3155,
+  "p99_ms": 10.9345,
+  "lat_avg_ms": 3.505,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 2015.0390551267576,
+  "client_us_per_unit": 1430.1510539237174,
+  "vm_cpu": [
+   19.0,
+   92.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "select",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 918.6500000000001,
+  "min": 533.6,
+  "max": 1303.7,
+  "p50_ms": 7.226999999999999,
+  "p95_ms": 113.47449999999999,
+  "p99_ms": 215.536,
+  "lat_avg_ms": 20.9785,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 1938.123356540433,
+  "client_us_per_unit": 1475.1589697746026,
+  "vm_cpu": [
+   82.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "select",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 605.15,
+  "min": 427.4,
+  "max": 782.9,
+  "p50_ms": 3.048,
+  "p95_ms": 25.3415,
+  "p99_ms": 61.804,
+  "lat_avg_ms": 7.224,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 2097.1016455859053,
+  "client_us_per_unit": 1444.686714317087,
+  "vm_cpu": [
+   37.0,
+   94.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "simple",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 53.45,
+  "min": 52.9,
+  "max": 54.0,
+  "p50_ms": 15.675,
+  "p95_ms": 33.457,
+  "p99_ms": 76.8965,
+  "lat_avg_ms": 18.6935,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 8813.14142589376,
+  "client_us_per_unit": 5692.180143077518,
+  "vm_cpu": [
+   45.0,
+   62.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "simple",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 112.19999999999999,
+  "min": 89.2,
+  "max": 135.2,
+  "p50_ms": 98.91050000000001,
+  "p95_ms": 469.4365,
+  "p99_ms": 709.182,
+  "lat_avg_ms": 148.066,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 9843.57337112338,
+  "client_us_per_unit": 6001.538064916602,
+  "vm_cpu": [
+   30.0,
+   97.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "simple",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 152.5,
+  "min": 106.8,
+  "max": 198.2,
+  "p50_ms": 16.3475,
+  "p95_ms": 116.499,
+  "p99_ms": 219.41299999999998,
+  "lat_avg_ms": 28.7555,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 7121.896367825374,
+  "client_us_per_unit": 3842.216478141697,
+  "vm_cpu": [
+   32.0,
+   57.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "tpcb",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 35.25,
+  "min": 34.5,
+  "max": 36.0,
+  "p50_ms": 23.2865,
+  "p95_ms": 55.8625,
+  "p99_ms": 139.68900000000002,
+  "lat_avg_ms": 28.250999999999998,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 12678.002111090766,
+  "client_us_per_unit": 7721.05866893573,
+  "vm_cpu": [
+   34.0,
+   97.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "tpcb",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 64.25,
+  "min": 36.9,
+  "max": 91.6,
+  "p50_ms": 195.11100000000002,
+  "p95_ms": 914.9855,
+  "p99_ms": 1380.4555,
+  "lat_avg_ms": 296.8515,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 17705.558230353607,
+  "client_us_per_unit": 11579.629524735588,
+  "vm_cpu": [
+   94.0,
+   96.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "tpcb",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 131.95,
+  "min": 117.1,
+  "max": 146.8,
+  "p50_ms": 23.429000000000002,
+  "p95_ms": 74.1555,
+  "p99_ms": 142.763,
+  "lat_avg_ms": 30.662,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 10274.654217362397,
+  "client_us_per_unit": 5640.863016715298,
+  "vm_cpu": [
+   21.0,
+   43.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "fb",
+  "params": {
+   "script": "tpcb",
+   "clients": "64"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 52.65,
+  "min": 41.4,
+  "max": 63.9,
+  "p50_ms": 711.4290000000001,
+  "p95_ms": 3486.877,
+  "p99_ms": 6552.698,
+  "lat_avg_ms": 1128.218,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 20971.24271230509,
+  "client_us_per_unit": 9951.271751014237,
+  "vm_cpu": [
+   54.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "select",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 1163.4499999999998,
+  "min": 878.8,
+  "max": 1448.1,
+  "p50_ms": 0.7215,
+  "p95_ms": 1.8275,
+  "p99_ms": 3.563,
+  "lat_avg_ms": 0.9124999999999999,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 583.9023487615771,
+  "client_us_per_unit": 457.8818238880804,
+  "vm_cpu": [
+   19.0,
+   71.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "select",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 3026.75,
+  "min": 2182.9,
+  "max": 3870.6,
+  "p50_ms": 0.8305,
+  "p95_ms": 7.435,
+  "p99_ms": 83.38,
+  "lat_avg_ms": 5.519,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 667.4357456510156,
+  "client_us_per_unit": 547.354154613227,
+  "vm_cpu": [
+   52.0,
+   96.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "select",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 2698.8999999999996,
+  "min": 2591.6,
+  "max": 2806.2,
+  "p50_ms": 0.7235,
+  "p95_ms": 3.3685,
+  "p99_ms": 13.342500000000001,
+  "lat_avg_ms": 1.4825,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 665.7293826857831,
+  "client_us_per_unit": 557.6889899949106,
+  "vm_cpu": [
+   17.0,
+   77.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "simple",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 120.35000000000001,
+  "min": 87.9,
+  "max": 152.8,
+  "p50_ms": 5.9795,
+  "p95_ms": 21.878,
+  "p99_ms": 69.7655,
+  "lat_avg_ms": 8.954,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 3892.501079589193,
+  "client_us_per_unit": 3236.730440660145,
+  "vm_cpu": [
+   9.0,
+   47.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "simple",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 708.3,
+  "min": 698.2,
+  "max": 718.4,
+  "p50_ms": 11.886,
+  "p95_ms": 71.085,
+  "p99_ms": 129.8115,
+  "lat_avg_ms": 22.5015,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 2846.4997410253195,
+  "client_us_per_unit": 1745.1055151858957,
+  "vm_cpu": [
+   10.0,
+   18.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "simple",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 468.3,
+  "min": 456.0,
+  "max": 480.6,
+  "p50_ms": 5.4635,
+  "p95_ms": 21.0465,
+  "p99_ms": 62.9495,
+  "lat_avg_ms": 8.5205,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 3134.6223457902224,
+  "client_us_per_unit": 2099.43071292555,
+  "vm_cpu": [
+   5.0,
+   71.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "tpcb",
+   "clients": "1"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 94.6,
+  "min": 83.4,
+  "max": 105.8,
+  "p50_ms": 7.039,
+  "p95_ms": 27.5585,
+  "p99_ms": 89.2135,
+  "lat_avg_ms": 10.7085,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 5579.689512147474,
+  "client_us_per_unit": 3934.180641920312,
+  "vm_cpu": [
+   32.0,
+   79.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "tpcb",
+   "clients": "16"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 426.25,
+  "min": 425.6,
+  "max": 426.9,
+  "p50_ms": 15.299500000000002,
+  "p95_ms": 152.3195,
+  "p99_ms": 324.4575,
+  "lat_avg_ms": 37.310500000000005,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 4449.422264022376,
+  "client_us_per_unit": 2760.644494751701,
+  "vm_cpu": [
+   79.0,
+   94.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "tpcb",
+   "clients": "4"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 551.6,
+  "min": 466.1,
+  "max": 637.1,
+  "p50_ms": 5.8580000000000005,
+  "p95_ms": 12.384,
+  "p99_ms": 28.11,
+  "lat_avg_ms": 7.4239999999999995,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 3471.263478182433,
+  "client_us_per_unit": 2043.4387097785057,
+  "vm_cpu": [
+   44.0,
+   74.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp",
+  "engine": "pg",
+  "params": {
+   "script": "tpcb",
+   "clients": "64"
+  },
+  "metric": "tps",
+  "n": 2,
+  "median": 314.4,
+  "min": 245.7,
+  "max": 383.1,
+  "p50_ms": 22.3915,
+  "p95_ms": 862.6975,
+  "p99_ms": 1916.1929999999998,
+  "lat_avg_ms": 162.869,
+  "retries": 0.0,
+  "failed": 0.0,
+  "server_us_per_unit": 5975.249813051877,
+  "client_us_per_unit": 3251.3698187848045,
+  "vm_cpu": [
+   97.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp-setup",
+  "engine": "fb",
+  "params": {
+   "scale": "10"
+  },
+  "metric": "seconds",
+  "n": 2,
+  "median": 69.0,
+  "min": 68.4,
+  "max": 69.6,
+  "vm_cpu": [
+   28.0,
+   100.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "oltp-setup",
+  "engine": "pg",
+  "params": {
+   "scale": "10"
+  },
+  "metric": "seconds",
+  "n": 2,
+  "median": 17.6,
+  "min": 15.0,
+  "max": 20.2,
+  "vm_cpu": [
+   24.0,
+   40.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "read",
+  "engine": "fb",
+  "params": {
+   "zoned": "on",
+   "wirecrypt": "off"
+  },
+  "metric": "rows_per_s",
+  "n": 6,
+  "median": 58965.0,
+  "min": 18267.0,
+  "max": 87346.0,
+  "server_us_per_unit": 15.375,
+  "client_us_per_unit": 9.3275,
+  "vm_cpu": [
+   18.0,
+   40.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "read",
+  "engine": "fb",
+  "params": {
+   "zoned": "on",
+   "wirecrypt": "on"
+  },
+  "metric": "rows_per_s",
+  "n": 3,
+  "median": 37047.0,
+  "min": 35773.0,
+  "max": 37155.0,
+  "server_us_per_unit": 26.225,
+  "client_us_per_unit": 17.33,
+  "vm_cpu": [
+   6.0,
+   6.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "read",
+  "engine": "pg",
+  "params": {
+   "zoned": "on",
+   "wirecrypt": "off"
+  },
+  "metric": "rows_per_s",
+  "n": 6,
+  "median": 130925.0,
+  "min": 74587.0,
+  "max": 146886.0,
+  "server_us_per_unit": 7.505000000000001,
+  "client_us_per_unit": 4.1725,
+  "vm_cpu": [
+   19.0,
+   85.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "size",
+  "engine": "fb",
+  "params": {
+   "table": ""
+  },
+  "metric": "database_mb",
+  "n": 2,
+  "median": 608.55,
+  "min": 571.4,
+  "max": 645.7,
+  "vm_cpu": [
+   77.0,
+   98.0
+  ]
+ },
+ {
+  "platform": "windows",
+  "test": "size",
+  "engine": "pg",
+  "params": {
+   "table": ""
+  },
+  "metric": "database_mb",
+  "n": 2,
+  "median": 690.8,
+  "min": 648.2,
+  "max": 733.4,
+  "vm_cpu": [
+   97.0,
+   100.0
+  ]
+ }
+]

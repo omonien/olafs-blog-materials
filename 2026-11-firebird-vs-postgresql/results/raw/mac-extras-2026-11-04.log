@@ -1,0 +1,225 @@
+LOAD time=2026-11-04T11:18:36 mac="22.98 38.14 43.24" docker_vm="3.77 5.89 5.09"
+=== pgbench select clients=1
+pgbench (18.6 (Debian 18.6-1.pgdg12+2))
+transaction type: <builtin: select only>
+scaling factor: 10
+query mode: prepared
+number of clients: 1
+number of threads: 1
+maximum number of tries: 1
+duration: 20 s
+number of transactions actually processed: 50154
+number of failed transactions: 0 (0.000%)
+latency average = 0.399 ms
+initial connection time = 8.178 ms
+tps = 2508.571729 (without initial connection time)
+RESULT test=pgbench engine=pg script=select clients=1 tps=2508.571729
+LOAD time=2026-11-04T11:18:57 mac="19.82 36.41 42.50" docker_vm="3.23 5.59 5.01"
+=== pgbench select clients=4
+pgbench (18.6 (Debian 18.6-1.pgdg12+2))
+transaction type: <builtin: select only>
+scaling factor: 10
+query mode: prepared
+number of clients: 4
+number of threads: 4
+maximum number of tries: 1
+duration: 20 s
+number of transactions actually processed: 141120
+number of failed transactions: 0 (0.000%)
+latency average = 0.567 ms
+initial connection time = 12.538 ms
+tps = 7058.818939 (without initial connection time)
+RESULT test=pgbench engine=pg script=select clients=4 tps=7058.818939
+LOAD time=2026-11-04T11:19:19 mac="26.51 36.67 42.44" docker_vm="4.66 5.74 5.07"
+=== pgbench select clients=16
+pgbench (18.6 (Debian 18.6-1.pgdg12+2))
+transaction type: <builtin: select only>
+scaling factor: 10
+query mode: prepared
+number of clients: 16
+number of threads: 16
+maximum number of tries: 1
+duration: 20 s
+number of transactions actually processed: 147755
+number of failed transactions: 0 (0.000%)
+latency average = 2.161 ms
+initial connection time = 71.864 ms
+tps = 7403.513932 (without initial connection time)
+RESULT test=pgbench engine=pg script=select clients=16 tps=7403.513932
+LOAD time=2026-11-04T11:19:41 mac="42.84 39.93 43.46" docker_vm="8.94 6.65 5.38"
+=== pgbench simple clients=1
+pgbench (18.6 (Debian 18.6-1.pgdg12+2))
+transaction type: <builtin: simple update>
+scaling factor: 10
+query mode: prepared
+number of clients: 1
+number of threads: 1
+maximum number of tries: 1
+duration: 20 s
+number of transactions actually processed: 3731
+number of failed transactions: 0 (0.000%)
+latency average = 5.359 ms
+initial connection time = 10.061 ms
+tps = 186.586860 (without initial connection time)
+RESULT test=pgbench engine=pg script=simple clients=1 tps=186.586860
+LOAD time=2026-11-04T11:20:03 mac="37.48 38.83 42.98" docker_vm="8.29 6.70 5.43"
+=== pgbench simple clients=4
+pgbench (18.6 (Debian 18.6-1.pgdg12+2))
+transaction type: <builtin: simple update>
+scaling factor: 10
+query mode: prepared
+number of clients: 4
+number of threads: 4
+maximum number of tries: 1
+duration: 20 s
+number of transactions actually processed: 11323
+number of failed transactions: 0 (0.000%)
+latency average = 7.057 ms
+initial connection time = 28.660 ms
+tps = 566.835871 (without initial connection time)
+RESULT test=pgbench engine=pg script=simple clients=4 tps=566.835871
+LOAD time=2026-11-04T11:20:24 mac="46.76 40.75 43.54" docker_vm="7.49 6.62 5.44"
+=== pgbench simple clients=16
+pgbench (18.6 (Debian 18.6-1.pgdg12+2))
+transaction type: <builtin: simple update>
+scaling factor: 10
+query mode: prepared
+number of clients: 16
+number of threads: 16
+maximum number of tries: 1
+duration: 20 s
+number of transactions actually processed: 30524
+number of failed transactions: 0 (0.000%)
+latency average = 10.485 ms
+initial connection time = 49.732 ms
+tps = 1526.021913 (without initial connection time)
+RESULT test=pgbench engine=pg script=simple clients=16 tps=1526.021913
+LOAD time=2026-11-04T11:20:46 mac="57.26 43.68 44.53" docker_vm="9.40 7.12 5.62"
+=== pgbench tpcb clients=1
+pgbench (18.6 (Debian 18.6-1.pgdg12+2))
+transaction type: <builtin: TPC-B (sort of)>
+scaling factor: 10
+query mode: prepared
+number of clients: 1
+number of threads: 1
+maximum number of tries: 1
+duration: 20 s
+number of transactions actually processed: 4392
+number of failed transactions: 0 (0.000%)
+latency average = 4.552 ms
+initial connection time = 9.110 ms
+tps = 219.668778 (without initial connection time)
+RESULT test=pgbench engine=pg script=tpcb clients=1 tps=219.668778
+LOAD time=2026-11-04T11:21:07 mac="58.87 44.94 44.97" docker_vm="6.58 6.64 5.51"
+=== pgbench tpcb clients=4
+pgbench (18.6 (Debian 18.6-1.pgdg12+2))
+transaction type: <builtin: TPC-B (sort of)>
+scaling factor: 10
+query mode: prepared
+number of clients: 4
+number of threads: 4
+maximum number of tries: 1
+duration: 20 s
+number of transactions actually processed: 12412
+number of failed transactions: 0 (0.000%)
+latency average = 6.443 ms
+initial connection time = 12.810 ms
+tps = 620.807132 (without initial connection time)
+RESULT test=pgbench engine=pg script=tpcb clients=4 tps=620.807132
+LOAD time=2026-11-04T11:21:28 mac="61.35 46.22 45.41" docker_vm="6.13 6.53 5.50"
+=== pgbench tpcb clients=16
+pgbench (18.6 (Debian 18.6-1.pgdg12+2))
+transaction type: <builtin: TPC-B (sort of)>
+scaling factor: 10
+query mode: prepared
+number of clients: 16
+number of threads: 16
+maximum number of tries: 1
+duration: 20 s
+number of transactions actually processed: 14328
+number of failed transactions: 0 (0.000%)
+latency average = 22.434 ms
+initial connection time = 50.470 ms
+tps = 713.218972 (without initial connection time)
+RESULT test=pgbench engine=pg script=tpcb clients=16 tps=713.218972
+LOAD time=2026-11-04T11:21:49 mac="115.96 60.22 50.48" docker_vm="7.84 6.89 5.63"
+=== fb server-side lookups and updates
+
+     LOOKUPS              CHECKSUM 
+============ ===================== 
+      200000                -45145 
+
+Current memory = 282681632
+Delta memory = 143568
+Max memory = 282765552
+Elapsed time = 7.055 sec
+Cpu = 0.010 sec
+Buffers = 32768
+Reads = 9088
+Writes = 0
+Fetches = 1000936
+
+     UPDATES 
+============ 
+      200000 
+
+Current memory = 283543632
+Delta memory = 862000
+Max memory = 283998576
+Elapsed time = 8.080 sec
+Cpu = 0.000 sec
+Buffers = 32768
+Reads = 1
+Writes = 0
+Fetches = 2215155
+Current memory = 283538320
+Delta memory = -5312
+Max memory = 283998576
+Elapsed time = 0.009 sec
+Cpu = 0.000 sec
+Buffers = 32768
+Reads = 0
+Writes = 1
+Fetches = 2
+LOAD time=2026-11-04T11:22:14 mac="89.80 58.78 50.26" docker_vm="5.64 6.45 5.52"
+=== pg server-side lookups and updates
+Timing is on.
+DO
+Time: 5110.074 ms (00:05.110)
+BEGIN
+NOTICE:  lookups 200000, checksum -184218
+Time: 0.444 ms
+DO
+Time: 11763.172 ms (00:11.763)
+NOTICE:  updates 200000
+ROLLBACK
+Time: 0.842 ms
+=== fb probe wirecrypt=on
+wire_encrypted=TRUE
+wire_crypt_plugin=Arc4
+wire_compressed=FALSE
+=== fb gstat data pages
+BENCH_ROWS (128)
+    Primary pointer page: 225, Index root page: 226
+    Data pages: 39768, average fill: 81%
+INS_ROWS (172)
+    Primary pointer page: 60850, Index root page: 60851
+    Data pages: 1296, average fill: 76%
+JSON_DOCS (130)
+    Primary pointer page: 43026, Index root page: 43027
+    Data pages: 16672, average fill: 89%
+LOAD_ROWS (174)
+    Primary pointer page: 64343, Index root page: 64408
+    Data pages: 8512, average fill: 78%
+PGBENCH_ACCOUNTS (176)
+    Primary pointer page: 79969, Index root page: 79970
+    Data pages: 8336, average fill: 63%
+PGBENCH_BRANCHES (178)
+    Primary pointer page: 60854, Index root page: 60855
+    Data pages: 1, average fill: 38%
+PGBENCH_HISTORY (175)
+    Primary pointer page: 80540, Index root page: 80541
+    Data pages: 360, average fill: 64%
+PGBENCH_TELLERS (177)
+    Primary pointer page: 60930, Index root page: 60931
+    Data pages: 8, average fill: 20%

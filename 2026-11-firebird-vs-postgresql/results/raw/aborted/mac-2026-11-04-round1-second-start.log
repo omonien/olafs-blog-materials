@@ -1,0 +1,37 @@
+ROUND 1 order fb pg
+LOAD time=2026-11-04T09:58:40 mac="19.24 23.92 49.02" docker_vm="1.28 1.74 1.99"
+=== fb read 
+RESULT test=read engine=fb zoned=on wirecrypt=off pass=1 rows=2000000 seconds=43.05 rows_per_s=46454 checks_ok=True client_cpu_s=33.13 server_cpu_s=40.91
+RESULT test=read engine=fb zoned=on wirecrypt=off pass=2 rows=2000000 seconds=32.11 rows_per_s=62292 checks_ok=True client_cpu_s=24.92 server_cpu_s=31.66
+RESULT test=read engine=fb zoned=on wirecrypt=off pass=3 rows=2000000 seconds=28.42 rows_per_s=70368 checks_ok=True client_cpu_s=22.38 server_cpu_s=27.93
+LOAD time=2026-11-04T10:00:27 mac="23.14 23.68 46.01" docker_vm="1.92 1.90 2.02"
+=== pg read 
+RESULT test=read engine=pg zoned=on wirecrypt=off pass=1 rows=2000000 seconds=10.21 rows_per_s=195881 checks_ok=True client_cpu_s=16.34 server_cpu_s=9.42
+RESULT test=read engine=pg zoned=on wirecrypt=off pass=2 rows=2000000 seconds=9.37 rows_per_s=213361 checks_ok=True client_cpu_s=15.10 server_cpu_s=9.71
+RESULT test=read engine=pg zoned=on wirecrypt=off pass=3 rows=2000000 seconds=8.99 rows_per_s=222455 checks_ok=True client_cpu_s=14.54 server_cpu_s=9.34
+LOAD time=2026-11-04T10:00:58 mac="38.00 27.32 46.56" docker_vm="2.54 2.05 2.07"
+=== fb insert clients=1
+RESULT test=insert engine=fb durability=default forced_writes=1 clients=1 seconds=30 txns=3408 tps=113.6 lat_avg_ms=8.798 p50_ms=8.073 p95_ms=12.591 p99_ms=23.434 max_ms=102.248 retries=0 failed=0 total_txns=3924 run_s=35 client_cpu_s=5.02 server_cpu_s=11.59
+LOAD time=2026-11-04T10:01:36 mac="27.85 26.08 45.22" docker_vm="1.94 1.97 2.04"
+=== pg insert clients=1
+RESULT test=insert engine=pg durability=default synchronous_commit=on,fsync=on clients=1 seconds=30 txns=9240 tps=308.0 lat_avg_ms=3.245 p50_ms=2.684 p95_ms=4.981 p99_ms=17.095 max_ms=533.924 retries=0 failed=0 total_txns=10771 run_s=35 client_cpu_s=20.66 server_cpu_s=0.07
+LOAD time=2026-11-04T10:02:14 mac="21.75 24.83 43.89" docker_vm="2.04 2.00 2.05"
+=== fb insert clients=8
+RESULT test=insert engine=fb durability=default forced_writes=1 clients=8 seconds=30 txns=10378 tps=345.9 lat_avg_ms=23.111 p50_ms=19.552 p95_ms=40.132 p99_ms=93.934 max_ms=379.189 retries=0 failed=0 total_txns=12162 run_s=35 client_cpu_s=11.66 server_cpu_s=43.68
+LOAD time=2026-11-04T10:02:52 mac="29.03 26.25 43.64" docker_vm="3.35 2.36 2.17"
+=== pg insert clients=8
+RESULT test=insert engine=pg durability=default synchronous_commit=on,fsync=on clients=8 seconds=30 txns=48181 tps=1606.0 lat_avg_ms=4.979 p50_ms=4.158 p95_ms=7.722 p99_ms=22.230 max_ms=572.158 retries=0 failed=0 total_txns=53804 run_s=35 client_cpu_s=60.28 server_cpu_s=0.07
+LOAD time=2026-11-04T10:03:31 mac="21.96 24.79 42.30" docker_vm="4.52 2.77 2.31"
+=== fb insert clients=1 durability=relaxed
+RESULT test=insert engine=fb durability=relaxed forced_writes=0 clients=1 seconds=30 txns=11476 tps=382.5 lat_avg_ms=2.612 p50_ms=2.514 p95_ms=3.841 p99_ms=5.144 max_ms=20.373 retries=0 failed=0 total_txns=13411 run_s=35 client_cpu_s=9.78 server_cpu_s=26.85
+LOAD time=2026-11-04T10:04:09 mac="18.05 23.36 40.97" docker_vm="2.84 2.56 2.26"
+=== pg insert clients=1 durability=relaxed
+RESULT test=insert engine=pg durability=relaxed synchronous_commit=off,fsync=on clients=1 seconds=30 txns=23612 tps=787.1 lat_avg_ms=1.269 p50_ms=1.183 p95_ms=1.936 p99_ms=2.740 max_ms=106.866 retries=0 failed=0 total_txns=27528 run_s=35 client_cpu_s=37.74 server_cpu_s=0.09
+LOAD time=2026-11-04T10:04:46 mac="14.61 21.88 39.72" docker_vm="2.21 2.44 2.23"
+=== fb insert clients=8 durability=relaxed
+RESULT test=insert engine=fb durability=relaxed forced_writes=0 clients=8 seconds=30 txns=54781 tps=1826.0 lat_avg_ms=4.379 p50_ms=4.056 p95_ms=7.193 p99_ms=10.125 max_ms=41.214 retries=0 failed=0 total_txns=63462 run_s=35 client_cpu_s=30.50 server_cpu_s=88.30
+LOAD time=2026-11-04T10:05:23 mac="14.19 20.98 38.67" docker_vm="4.58 3.00 2.43"
+=== pg insert clients=8 durability=relaxed
+RESULT test=insert engine=pg durability=relaxed synchronous_commit=off,fsync=on clients=8 seconds=30 txns=129493 tps=4316.4 lat_avg_ms=1.852 p50_ms=1.668 p95_ms=3.286 p99_ms=4.962 max_ms=130.753 retries=0 failed=0 total_txns=143058 run_s=35 client_cpu_s=102.66 server_cpu_s=0.16
+LOAD time=2026-11-04T10:06:01 mac="14.48 20.27 37.60" docker_vm="7.11 3.81 2.72"
+=== fb bulk rows=100000 mode=prepared
