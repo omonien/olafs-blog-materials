@@ -4,13 +4,14 @@
 #   PostgreSQL: the official EDB binaries 18.1 as a zip (no installation, no service)
 # setup: prepares both servers (copy, download, fill) and builds the .NET program; run it once.
 # run:   starts one server, runs the given steps against it one after the other, and stops it again.
+# build: builds the .NET program again (after a change of its source).
 # fsync: measures with pg_test_fsync how expensive a flush is on the disk of the work folder.
 # Examples: .\compare.ps1 setup
 #           .\compare.ps1 run -Engine fb -Steps 'probe;read;insert clients=1'
 # Steps are separated by semicolons, so that the list survives powershell -File as one argument.
 [CmdletBinding(PositionalBinding = $false)]
 param(
-  [Parameter(Mandatory, Position = 0)][ValidateSet('setup', 'run', 'fsync')][string]$Phase,
+  [Parameter(Mandatory, Position = 0)][ValidateSet('setup', 'build', 'run', 'fsync')][string]$Phase,
   [ValidateSet('fb', 'pg')][string]$Engine,
   [string]$Steps = '',
   [string]$FirebirdDir = 'C:\Program Files\Firebird\Firebird_5_0',
@@ -110,13 +111,18 @@ function Invoke-IsqlScript([string]$Sql, [string[]]$Arguments = @()) {
   finally { Remove-Item $file }
 }
 
-if ($Phase -eq 'setup') {
-  New-Item -ItemType Directory -Force -Path $WorkDir | Out-Null
+function Build-Bench {
   $env:DOTNET_CLI_TELEMETRY_OPTOUT = '1'
   $env:DOTNET_NOLOGO = '1'
   # The hash shows that the VM builds the same source as the Mac.
   "source: Program.cs SHA-256 $((Get-FileHash (Join-Path $BenchDir 'dotnet\Program.cs') -Algorithm SHA256).Hash)"
   Invoke-Native 'dotnet' @('build', (Join-Path $BenchDir 'dotnet\DbCompareBench.csproj'), '-c', 'Release', '-nologo', '-v', 'q')
+}
+
+if ($Phase -eq 'build') { Build-Bench }
+elseif ($Phase -eq 'setup') {
+  New-Item -ItemType Directory -Force -Path $WorkDir | Out-Null
+  Build-Bench
 
   if (-not (Test-Path (Join-Path $fbRoot 'firebird.exe'))) {
     New-Item -ItemType Directory -Force -Path $fbRoot | Out-Null
