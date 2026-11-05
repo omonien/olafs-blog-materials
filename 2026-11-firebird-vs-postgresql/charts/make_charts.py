@@ -32,6 +32,8 @@ TEXT = {
         "windows": "Windows 11 (VM), beide Server lokal ohne Netz",
         "factor": "PostgreSQL × {0}", "factor_inv": "Firebird × {0}",
         "na": "nicht möglich",
+        "alt_factor": "{0} {1}-mal so viel", "not_measured": "nicht gemessen", "client": "Client",
+        "rows_s": "Zeilen pro Sekunde", "txn_s": "Transaktionen pro Sekunde", "ms_long": "Millisekunden",
         "read_title": "Zwei Millionen Zeilen lesen",
         "read_sub": "Tausend Zeilen pro Sekunde, Median aller Durchläufe. Mehr ist besser.",
         "read_groups": {"on": "12 Spalten, wie im ersten Beitrag", "wire": "Firebird mit Leitungsverschlüsselung"},
@@ -74,6 +76,8 @@ TEXT = {
         "windows": "Windows 11 (VM), both servers local without network",
         "factor": "PostgreSQL × {0}", "factor_inv": "Firebird × {0}",
         "na": "not possible",
+        "alt_factor": "{0} {1} times as much", "not_measured": "not measured", "client": "client",
+        "rows_s": "rows per second", "txn_s": "transactions per second", "ms_long": "milliseconds",
         "read_title": "Reading two million rows",
         "read_sub": "Thousand rows per second, median of all passes. Higher is better.",
         "read_groups": {"on": "12 columns, as in the first post", "wire": "Firebird with wire encryption"},
@@ -143,6 +147,19 @@ def short(value, lang):
     return number(value, lang, 1)
 
 
+def alt(value, lang, unit=None):
+    """A value for the <desc> text that screen readers announce: formatted like the labels, unit spelled out.
+    False means the series was not measured for this server, None that the method does not exist there.
+    Without unit the caller names it once for a list of values."""
+    t = TEXT[lang]
+    if value is False:
+        return t["not_measured"]
+    if value is None:
+        return t["na"]
+    s = number(value, lang, 0 if value >= 100 else 1)
+    return f"{s} {t[unit]}" if unit else s
+
+
 def text_width(s, size):
     narrow = sum(1 for c in s if c in "il.,:;|!'() ")
     wide = sum(1 for c in s if c in "MWmw%")
@@ -200,8 +217,9 @@ def nice_ticks(top):
     return [i * step for i in range(n + 1)]
 
 
-def pairs(lang, title, subtitle, panels, scale_div, note, label_col=210):
-    """Grouped horizontal bars: per panel and group one Firebird and one PostgreSQL bar, with the factor."""
+def pairs(lang, title, subtitle, panels, scale_div, note, unit, label_col=210):
+    """Grouped horizontal bars: per panel and group one Firebird and one PostgreSQL bar, with the factor.
+    unit names the TEXT key of the measured quantity for the <desc> text (the bars show it divided by scale_div)."""
     t = TEXT[lang]
     head, y = header(lang, title, subtitle)
     values = [v / scale_div for _, groups in panels for _, fb, pg in groups for v in (fb, pg) if v]
@@ -229,10 +247,12 @@ def pairs(lang, title, subtitle, panels, scale_div, note, label_col=210):
         gy = y + 4
         for label, fb, pg in groups:
             out.append(txt(24, gy + bar_h - 1, label, "t1"))
+            line = f"{t[panel]}, {label}: Firebird {alt(fb, lang, unit)}, PostgreSQL {alt(pg, lang, unit)}"
             if fb and pg and pg is not False:
                 f = pg / fb
                 factor = t["factor"].format(number(f, lang, 1)) if f >= 1 else t["factor_inv"].format(number(1 / f, lang, 1))
                 out.append(txt(24, gy + 2 * bar_h + pair_gap - 1, factor, "t3", 12))
+                line += ", " + t["alt_factor"].format("PostgreSQL" if f >= 1 else "Firebird", number(max(f, 1 / f), lang, 1))
             for i, (cls, value) in enumerate((("fb", fb), ("pg", pg))):
                 by = gy + i * (bar_h + pair_gap)
                 if value is False:  # not measured for this server
@@ -243,7 +263,7 @@ def pairs(lang, title, subtitle, panels, scale_div, note, label_col=210):
                 w = value / scale_div * scale
                 out.append(bar(x0, by, w, bar_h, cls))
                 out.append(txt(x0 + w + 6, by + bar_h - 2.5, short(value / scale_div, lang), "t2", 12))
-            desc.append(f"{t[panel]}, {label}: Firebird {fb}, PostgreSQL {pg}")
+            desc.append(line)
             gy += 2 * bar_h + pair_gap + group_gap
         out.append(f'<line class="base" x1="{x0}" y1="{top}" x2="{x0}" y2="{bottom}" stroke-width="1"/>')
         y = bottom + 30
@@ -261,21 +281,21 @@ def read_chart(get, lang):
         wire = get(p, "read", "fb", zoned="on", wirecrypt="on")
         if wire:
             groups.append((t["read_groups"]["wire"], wire, False))
-    return pairs(lang, t["read_title"], t["read_sub"], panels, 1000, [t["read_note"], t["raw"]], label_col=300)
+    return pairs(lang, t["read_title"], t["read_sub"], panels, 1000, [t["read_note"], t["raw"]], "rows_s", label_col=300)
 
 
 def insert_chart(get, lang):
     t = TEXT[lang]
     panels = [(p, [(label, get(p, "insert", "fb", durability=d, clients=c), get(p, "insert", "pg", durability=d, clients=c))
                    for (d, c), label in t["insert_groups"].items()]) for p in PLATFORMS]
-    return pairs(lang, t["insert_title"], t["insert_sub"], panels, 1, [t["insert_note"], t["raw"]])
+    return pairs(lang, t["insert_title"], t["insert_sub"], panels, 1, [t["insert_note"], t["raw"]], "txn_s")
 
 
 def bulk_chart(get, lang):
     t = TEXT[lang]
     panels = [(p, [(label, get(p, "bulk", "fb", mode=m), get(p, "bulk", "pg", mode=m)) for m, label in t["bulk_groups"].items()])
               for p in PLATFORMS]
-    return pairs(lang, t["bulk_title"], t["bulk_sub"], panels, 1000, [t["raw"]], label_col=320)
+    return pairs(lang, t["bulk_title"], t["bulk_sub"], panels, 1000, [t["raw"]], "rows_s", label_col=320)
 
 
 def oltp_chart(get, lang):
@@ -326,8 +346,9 @@ def oltp_chart(get, lang):
                     other = [get(p, "oltp", e2, script=script, clients=present[-1]) for e2 in ("fb", "pg") if e2 != engine][0]
                     below = engine == "fb" and other is not None and abs(ys(other) - yv) < 16
                     out.append(txt(x + 2, yv + 16 if below else yv - 8, short(v, lang), "t2", 11, anchor="end"))
-                desc.append(f"{t[p]}, {t['oltp_scripts'][script]}, {t[engine]}: " +
-                            ", ".join(f"{c} {t['oltp_clients']} {get(p, 'oltp', engine, script=script, clients=c)}" for c in present))
+                desc.append(f"{t[p]}, {t['oltp_scripts'][script]}, {t[engine]}, {t['txn_s']}: " +
+                            ", ".join(f"{c} {t['client'] if c == '1' else t['oltp_clients']} "
+                                      f"{alt(get(p, 'oltp', engine, script=script, clients=c), lang)}" for c in present))
         y = bottom_y + 26
     out.append(txt(24, y + 4, f"{t['oltp_clients']}: 1, 4, 16, 64 (64 nur TPC-B). Jedes Feld hat eine eigene Skala." if lang == "de" else f"{t['oltp_clients'].capitalize()}: 1, 4, 16, 64 (64 for TPC-B only). Every panel has its own scale.", "t3", 12))
     out.append(txt(24, y + 22, t["raw"], "t3", 12))
@@ -369,11 +390,12 @@ def json_chart(get, lang):
                 if v is None:
                     if engine == "fb":
                         out.append(txt(x0 + 6, by + bar_h - 2, t["na"], "t3", 11))
+                        desc.append(f"{t[p]}, {t['json_rows'][key]}, {t[engine]}: {t['na']}")
                     continue
                 w = scale(v) - x0
                 out.append(bar(x0, by, w, bar_h, cls))
                 out.append(txt(x0 + w + 6, by + bar_h - 2, t["ms"].format(short(v, lang)), "t2", 11))
-                desc.append(f"{t[p]}, {t['json_rows'][key]}, {t[engine]}: {v} ms")
+                desc.append(f"{t[p]}, {t['json_rows'][key]}, {t[engine]}: {alt(v, lang, 'ms_long')}")
             gy += 2 * bar_h + pair_gap + group_gap
         out.append(f'<line class="base" x1="{x0}" y1="{top}" x2="{x0}" y2="{bottom}" stroke-width="1"/>')
         y = bottom + 30
@@ -397,7 +419,7 @@ def firedac_chart(get, lang):
                                   ("fd_plain", "firedac", "default")):
         panels.append((panel, [(label, value("fb", driver, test, c, cursor), value("pg", driver, test, c, cursor))
                                for (test, c), label in t["fd_groups"].items()]))
-    return pairs(lang, t["fd_title"], t["fd_sub"], panels, 1, [t["fd_note"], t["raw"]], label_col=250)
+    return pairs(lang, t["fd_title"], t["fd_sub"], panels, 1, [t["fd_note"], t["raw"]], "txn_s", label_col=250)
 
 
 def main():
